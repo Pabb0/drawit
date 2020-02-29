@@ -18,7 +18,12 @@ public class RoundedPolygon {
 		vertices = newVertices;
 	}
 	
+	/**
+	 * @pre The radius is larger than or equal to zero
+	 * 		| newRadius >= 0
+	 */
 	public void setRadius(int newRadius) {
+		System.out.println(newRadius);
 		radius = newRadius;
 	}
 	
@@ -35,7 +40,8 @@ public class RoundedPolygon {
 	}
 	
 	public boolean contains(IntPoint point) {
-		IntPoint pointOnRight = new IntPoint(10000, point.getY());
+		int largeNumber = 100000;
+		IntPoint pointOnRight = new IntPoint(largeNumber, point.getY());
 		
 		boolean result = false;
 		for (int i = 0; i < vertices.length; i++) {
@@ -69,10 +75,10 @@ public class RoundedPolygon {
 			DoublePoint BCC = B.asDoublePoint().plus(BC.asDoubleVector().scale(0.5));
 			
 			if (BA.isCollinearWith(BC)){
-				result += "line " + String.valueOf((int) (BAC.getX() + 0.5)) + " "
-				+ String.valueOf((int) (BAC.getY() + 0.5)) + " "
-				+ String.valueOf((int) (BCC.getX() + 0.5)) + " " 
-				+ String.valueOf((int) (BCC.getY() + 0.5)) + "\n";		
+				result += "line " + String.valueOf((int) Math.round((BAC.getX()))) + " "
+				+ String.valueOf((int) Math.round((BAC.getY()))) + " "
+				+ String.valueOf((int) Math.round((BCC.getX()))) + " " 
+				+ String.valueOf((int) Math.round((BCC.getY()))) + "\n";		
 			} else {
 				DoubleVector BAU = BA.asDoubleVector();
 				BAU = BAU.scale(1 / BAU.getSize());

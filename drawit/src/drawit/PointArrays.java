@@ -55,13 +55,13 @@ public class PointArrays {
 		}
 		for(int i = 0; i < points.length; i++) {
 			for(int j = 0; j < points.length; j++) {
-				if (points[i].equals(points[j]) && i != j) {
+				if (i != j && points[i].equals(points[j])) {
 					return "The given array of points does not define a proper polygon because at least two vertices coincide.";
 				}
 				if (points[j].isOnLineSegment(points[i], points[(i + 1) % points.length])) {
 					return "The given array of points does not define a proper polygon because at least one vertex is on any edge.";
 				}
-				if (IntPoint.lineSegmentIntersect(points[i], points[(i + 1) % points.length], points[j], points[(j + 1) % points.length]) && i != j) {
+				if (i != j && IntPoint.lineSegmentIntersect(points[i], points[(i + 1) % points.length], points[j], points[(j + 1) % points.length])) {
 					return "The given array of points does not define a proper polygon because at least two edges intersect.";
 				}
 			}

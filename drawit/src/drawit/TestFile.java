@@ -67,6 +67,7 @@ class TestFile {
 		IntVector iVector3 = new IntVector(-2,4);
 		IntVector iVector4 = new IntVector(11,22);
 		IntVector iVector5 = new IntVector(1,2);
+
 		
 		assert iVector1.getX() == 1;
 		assert iVector3.getY() == 4;
@@ -98,6 +99,19 @@ class TestFile {
 		IntPoint iPoint16 = new IntPoint(200, 200);
 		IntPoint iPoint17 = new IntPoint(175, 125);
 		IntPoint iPoint18 = new IntPoint(0, 150);
+		
+		//IntPoint iPoint19 = new IntPoint(Integer.MAX_VALUE - 20, 200);
+		//IntPoint iPoint20 = new IntPoint(-70, 200);
+		
+		IntVector iDiff1 = iPoint1.minus(iPoint2);
+		IntVector iDiff2 = iPoint9.minus(iPoint10);
+		IntVector iDiff3 = iPoint9.minus(iPoint2);
+		IntVector iDiff4 = iPoint1.minus(iPoint5);
+		//IntVector iDiff5 = iPoint19.minus(iPoint20);
+
+		
+
+
 
 		assert iPoint1.getX() == 2;
 		assert iPoint1.getY() == 0;
