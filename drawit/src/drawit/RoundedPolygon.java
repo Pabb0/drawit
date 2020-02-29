@@ -23,19 +23,31 @@ public class RoundedPolygon {
 	}
 	
 	public void insert(int index, IntPoint point) {
-		PointArrays.insert(vertices, index, point);
+		vertices = PointArrays.insert(vertices, index, point);
 	}
 	
-	public void remove(int index, IntPoint point) {
-		PointArrays.remove(vertices, index);
+	public void remove(int index) {
+		vertices = PointArrays.remove(vertices, index);
 	}
 	
 	public void update(int index, IntPoint point) {
-		PointArrays.update(vertices, index, point);
+		vertices = PointArrays.update(vertices, index, point);
 	}
 	
 	public boolean contains(IntPoint point) {
-		return false;
+		IntPoint pointOnRight = new IntPoint(10000, point.getY());
+		
+		boolean result = false;
+		for (int i = 0; i < vertices.length; i++) {
+			if (point.equals(vertices[i])) {
+				return true;
+			}
+			if (IntPoint.lineSegmentIntersect(point, pointOnRight, vertices[i], vertices[(i + 1) % vertices.length]) || vertices[i].isOnLineSegment(point, pointOnRight)) {
+				result = !result;
+			}
+		}
+		return result;
+
 	}
 	
 	public String getDrawingCommands() {
@@ -59,18 +71,12 @@ public class RoundedPolygon {
 			if (BA.isCollinearWith(BC)){
 				result += "line " + String.valueOf((int) (BAC.getX() + 0.5)) + " "
 				+ String.valueOf((int) (BAC.getY() + 0.5)) + " "
-				+ String.valueOf((int) (B.getX() + 0.5)) + " " 
-				+ String.valueOf((int) (B.getY() + 0.5)) + "\n";
-				
-				result += "line " + String.valueOf((int) (B.getX() + 0.5)) + " "
-				+ String.valueOf((int) (B.getY() + 0.5)) + " "
 				+ String.valueOf((int) (BCC.getX() + 0.5)) + " " 
-				+ String.valueOf((int) (BCC.getY() + 0.5)) + "\n";
-				
+				+ String.valueOf((int) (BCC.getY() + 0.5)) + "\n";		
 			} else {
-				DoubleVector BAU = A.minus(B).asDoubleVector();
+				DoubleVector BAU = BA.asDoubleVector();
 				BAU = BAU.scale(1 / BAU.getSize());
-				DoubleVector BCU = C.minus(B).asDoubleVector();
+				DoubleVector BCU = BC.asDoubleVector();
 				BCU = BCU.scale(1 / BCU.getSize());
 				DoubleVector BSU = BAU.plus(BCU);
 				BSU = BSU.scale(1 / BSU.getSize());
@@ -80,12 +86,12 @@ public class RoundedPolygon {
 				
 				double appliedScaleFactor = Math.min(this.getRadius() / unitRadius, (0.5 * Math.min(BA.asDoubleVector().getSize(),  BC.asDoubleVector().getSize()) / BAUcutoff));
 				
-				DoublePoint actualCorner = B.asDoublePoint().plus(BSU.scale(appliedScaleFactor));
 				double actualRadius = unitRadius * appliedScaleFactor;
+				DoublePoint actualCorner = B.asDoublePoint().plus(BSU.scale(appliedScaleFactor));
 				
-				DoublePoint arcStart = B.asDoublePoint().plus(BA.asDoubleVector().scale((1 / (BAUcutoff*appliedScaleFactor))));
-				DoublePoint arcEnd = B.asDoublePoint().plus(BC.asDoubleVector().scale((1 / (BAUcutoff*appliedScaleFactor))));
-				
+				DoublePoint arcStart = B.asDoublePoint().plus(BAU.scale(BAUcutoff * appliedScaleFactor));
+				DoublePoint arcEnd = B.asDoublePoint().plus(BCU.scale(BAUcutoff * appliedScaleFactor));
+
 				DoubleVector centerToStart = arcStart.minus(actualCorner);
 				double startAngle = centerToStart.asAngle();
 				
@@ -99,21 +105,21 @@ public class RoundedPolygon {
 					angleExtent -= 2 * Math.PI;
 				}
 				
-				result += "line " + String.valueOf((int) (BAC.getX() + 0.5)) + " "
-				+ String.valueOf((int) (BAC.getY() + 0.5)) + " "
-				+ String.valueOf((int) (arcStart.getX() + 0.5)) + " " 
-				+ String.valueOf((int) (arcStart.getY() + 0.5)) + "\n";
+				result += "line " + String.valueOf((int) Math.round(BAC.getX())) + " "
+				+ String.valueOf((int) Math.round(BAC.getY())) + " "
+				+ String.valueOf((int) Math.round(arcStart.getX())) + " " 
+				+ String.valueOf((int) Math.round(arcStart.getY())) + "\n";
 				
-				result += "arc " + String.valueOf((int) (actualCorner.getX() + 0.5)) + " "
-				+ String.valueOf((int) (actualCorner.getY() + 0.5)) + " "
-				+ String.valueOf((int) (actualRadius + 0.5)) + " "
+				result += "arc " + String.valueOf((int) Math.round(actualCorner.getX())) + " "
+				+ String.valueOf((int) Math.round(actualCorner.getY())) + " "
+				+ String.valueOf((int) Math.round(actualRadius)) + " "
 				+ String.valueOf(startAngle) + " "
 				+ String.valueOf(angleExtent) + "\n";
 				
-				result += "line " + String.valueOf((int) (arcEnd.getX() + 0.5)) + " "
-				+ String.valueOf((int) (arcEnd.getY() + 0.5)) + " "
-				+ String.valueOf((int) (BCC.getX() + 0.5)) + " " 
-				+ String.valueOf((int) (BCC.getY() + 0.5)) + "\n";		
+				result += "line " + String.valueOf((int) Math.round(arcEnd.getX())) + " "
+				+ String.valueOf((int) Math.round(arcEnd.getY())) + " "
+				+ String.valueOf((int) Math.round(BCC.getX())) + " " 
+				+ String.valueOf((int) Math.round(BCC.getY())) + "\n";		
 			}
 			
 		}

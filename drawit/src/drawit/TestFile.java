@@ -23,7 +23,6 @@ class TestFile {
 		assert dVector4.getY() == 0.0;
 		assert dVector1.getSize() == 2.0;
 		assert dVector2.getSize() == Math.sqrt(2.0);
-
 		DoubleVector dVectorSum = dVector1.plus(dVector2);
 		assert dVectorSum.getX() == dVector5.getX();
 		assert dVectorSum.getY() == dVector5.getY();
@@ -34,6 +33,11 @@ class TestFile {
 		assert dVector4.dotProduct(dVector5) == 3.0*3.5;
 		assert dVector3.dotProduct(dVector5) == 8.8;
 		assert dVector1.dotProduct(dVector3) == 5.0;
+		assert dVector1.crossProduct(dVector2) == 2.0;
+		assert dVector1.crossProduct(dVector4) == 0.0;
+		assert dVector2.crossProduct(dVector3) == 1.0 * 1.3 - 2.5;
+		assert dVector1.asAngle() == 0.0;
+		assert dVector2.asAngle() == Math.PI / 4;
 		
 
 		DoublePoint dPoint1 = new DoublePoint(2.0, 0.0);
@@ -50,6 +54,12 @@ class TestFile {
 		assert dPointSum.getY() == -0.5;
 		assert dVectorDiff.getX() == 5.5;
 		assert dVectorDiff.getY() == 1.0;
+		IntPoint IntDPoint2 = dPoint2.round();
+		IntPoint IntDPoint4 = dPoint4.round();
+		assert IntDPoint2.getX() == 3;
+		assert IntDPoint2.getY() == 3;
+		assert IntDPoint4.getX() == 6;
+		assert IntDPoint4.getY() == 1;
 
 
 		IntVector iVector1 = new IntVector(1,2);
@@ -82,6 +92,12 @@ class TestFile {
 		IntPoint iPoint10 = new IntPoint(200, 100);
 		IntPoint iPoint11 = new IntPoint(200, 200);
 		IntPoint iPoint12 = new IntPoint(100, 200);
+		IntPoint iPoint13 = new IntPoint(150, 150);
+		IntPoint iPoint14 = new IntPoint(100, 150);
+		IntPoint iPoint15 = new IntPoint(0, 0);
+		IntPoint iPoint16 = new IntPoint(200, 200);
+		IntPoint iPoint17 = new IntPoint(175, 125);
+		IntPoint iPoint18 = new IntPoint(0, 150);
 
 		assert iPoint1.getX() == 2;
 		assert iPoint1.getY() == 0;
@@ -104,8 +120,7 @@ class TestFile {
 		IntPoint[] iPointArray4 = {iPoint6, iPoint8, iPoint1, iPoint5};
 		IntPoint[] iPointArray5 = {iPoint9, iPoint10, iPoint11, iPoint12};
 		IntPoint[] iPointArray6 = {iPoint9, iPoint2};
-
-
+		IntPoint[] iPointArray7 = {iPoint9, iPoint17, iPoint13, iPoint11, iPoint12};
 
 		IntPoint[] iPointArrayRemove = PointArrays.remove(iPointArray1, 0);
 		assert iPointArrayRemove[0] == iPoint4;
@@ -127,9 +142,6 @@ class TestFile {
 		assert Arrays.equals(iPointArray3, PointArrays.copy(iPointArray3));
 		assert Arrays.equals(iPointArray4, PointArrays.copy(iPointArray4));
 		assert Arrays.equals(iPointArray5, PointArrays.copy(iPointArray5));
-
-
-
 		
 
 		String message1 = PointArrays.checkDefinesProperPolygon(iPointArray1);
@@ -157,13 +169,33 @@ class TestFile {
 	    polygon1.setRadius(10);
 	    assert polygon1.getVertices() == iPointArray5;
 	    assert polygon1.getRadius() == 10;
+	    polygon1.remove(0);
+	    assert polygon1.getVertices().length == 3;
+	    assert polygon1.getVertices()[0] == iPoint10;
+	    assert polygon1.getVertices()[1] == iPoint11;
+	    assert polygon1.getVertices()[2] == iPoint12;
+	    polygon1.insert(0, iPoint2);
+	    assert polygon1.getVertices().length == 4;
+	    assert polygon1.getVertices()[0] == iPoint2;
+	    assert polygon1.getVertices()[1] == iPoint10;
+	    assert polygon1.getVertices()[2] == iPoint11;
+	    assert polygon1.getVertices()[3] == iPoint12;
+	    polygon1.update(0, iPoint9);
+	    assert polygon1.getVertices().length == 4;
+	    assert polygon1.getVertices()[0] == iPoint9;
+	    assert polygon1.getVertices()[1] == iPoint10;
+	    assert polygon1.getVertices()[2] == iPoint11;
+	    assert polygon1.getVertices()[3] == iPoint12;
+	    assert polygon1.contains(iPoint13) == true;
+	    assert polygon1.contains(iPoint14) == true;
+	    assert polygon1.contains(iPoint15) == false;
+	    assert polygon1.contains(iPoint16) == true;
+	    assert polygon1.contains(iPoint17) == true;
 
-	    
+	    RoundedPolygon polygon2 = new RoundedPolygon();
+	    polygon2.setVertices(iPointArray7);
+	    assert polygon2.contains(iPoint18) == false;
 
 	    System.out.println(polygon1.getDrawingCommands());
-
 	}
-
-
-
 }

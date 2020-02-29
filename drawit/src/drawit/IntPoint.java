@@ -4,7 +4,7 @@ public class IntPoint {
 	private int x;
 	private int y;
 
-	IntPoint(int xGiven, int yGiven) {
+	public IntPoint(int xGiven, int yGiven) {
 		x = xGiven;
 		y = yGiven;
 	}

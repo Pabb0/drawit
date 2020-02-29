@@ -32,8 +32,8 @@ public class DoublePoint {
 	}
 
 	public IntPoint round() {
-		int xRounded = (int) (x + 0.5);
-		int yRounded = (int) (y + 0.5);
+		int xRounded = (int) Math.round(x);
+		int yRounded = (int) Math.round(y);
 
 		return new IntPoint(xRounded, yRounded);
 	}

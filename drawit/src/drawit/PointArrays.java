@@ -3,12 +3,12 @@ package drawit;
 public class PointArrays {
 
 	public static IntPoint[] copy(IntPoint[] points) {
-	
 		IntPoint[] newArray = new IntPoint[points.length];
 		
 		for(int i = 0; i < points.length; i++) {
 			newArray[i] = points[i];
 		}
+		
 		return newArray;
 	}
 	

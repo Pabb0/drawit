@@ -4,7 +4,7 @@ public class DoubleVector {
 	private double x;
 	private double y;
 	
-	DoubleVector(double xGiven, double yGiven) {
+	public DoubleVector(double xGiven, double yGiven) {
 		x = xGiven;
 		y = yGiven;
 	}

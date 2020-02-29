@@ -4,7 +4,7 @@ public class IntVector {
 	private int x;
 	private int y;
 
-	IntVector(int xGiven, int yGiven) {
+	public IntVector(int xGiven, int yGiven) {
 		x = xGiven;
 		y = yGiven;
 	}
