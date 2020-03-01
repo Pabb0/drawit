@@ -25,9 +25,12 @@ public class RoundedPolygon {
 	public int getRadius() {
 		return radius;
 	}
+	
 	/**
 	 * @mutates | this
 	 * 
+	 * @pre The given array of vertices defines a proper polygon
+	 * 		| PointArrays.checkDefinesProperPolygon(newVertices) == null
 	 * @post Arrays.equals(this.getVertices(), newVertices)
 	 */
 	public void setVertices(IntPoint[] newVertices) {
@@ -50,6 +53,11 @@ public class RoundedPolygon {
 	 * 
 	 * @mutates | this
 	 * 
+	 * @post
+	 *     | this.getVertices().length == old(this.getVertices().length) + 1 &&
+	 *     | Arrays.equals(this.getVertices(), 0, index, old(this.getVertices()), 0, index) &&
+	 *     | this.getVertices()[index] == point &&
+	 *     | Arrays.equals(this.getVertices(), index + 1, this.getVertices().length, old(this.getVertices()), index, old(this.getVertices().length))    
 	 */
 	public void insert(int index, IntPoint point) {
 		vertices = PointArrays.insert(vertices, index, point);
@@ -60,6 +68,10 @@ public class RoundedPolygon {
 	 *
 	 * @mutates | this
 	 * 
+	 * @post
+	 *     | this.getVertices().length == old(this.getVertices().length) - 1 &&
+	 *     | Arrays.equals(this.getVertices(), 0, index, old(this.getVertices()), 0, index) &&
+	 *     | Arrays.equals(this.getVertices(), index, this.getVertices().length, old(this.getVertices()), index + 1, old(this.getVertices().length))    
 	 */
 	public void remove(int index) {
 		vertices = PointArrays.remove(vertices, index);
@@ -82,15 +94,18 @@ public class RoundedPolygon {
 	}
 	
 	public boolean contains(IntPoint point) {
-		int largeNumber = 100000;
-		IntPoint pointOnRight = new IntPoint(largeNumber, point.getY());
-		
 		boolean result = false;
+
 		for (int i = 0; i < vertices.length; i++) {
-			if (point.equals(vertices[i])) {
+			IntPoint firstPoint = vertices[i];
+			IntPoint nextPoint = vertices[(i + 1) % vertices.length];
+			IntPoint pointOnRight = new IntPoint(Math.max(firstPoint.getX(), nextPoint.getX()) + 1, point.getY());
+
+
+			if (point.equals(firstPoint)  || point.isOnLineSegment(firstPoint, nextPoint)) {
 				return true;
 			}
-			if (IntPoint.lineSegmentIntersect(point, pointOnRight, vertices[i], vertices[(i + 1) % vertices.length]) || vertices[i].isOnLineSegment(point, pointOnRight)) {
+			if ((point.getY() == firstPoint.getY() && point.getX() < firstPoint.getX()) || IntPoint.lineSegmentIntersect(firstPoint, nextPoint, point, pointOnRight)) {
 				result = !result;
 			}
 		}

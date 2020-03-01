@@ -14,9 +14,9 @@ public class IntPoint {
 	 * @mutates | this
 	 * 
 	 * @post This object's x-value equals the given x-value.
-	 * 		| getX() == xGiven
+	 * 		| this.getX() == xGiven
 	 * @post This object's y-value equals the given y-value.
-	 * 		| getY() == yGiven
+	 * 		| this.getY() == yGiven
 	 */
 	public IntPoint(int xGiven, int yGiven) {
 		x = xGiven;
@@ -32,39 +32,33 @@ public class IntPoint {
 	}
 	
 	/**
-	 * Returns whether two points are equal.
+	 * Returns whether this point and the given point are equal.
 	 * 
 	 * @inspects | this
 	 * @inspects | other
-	 * @creates | result
 	 * 
-	 * @post 
+	 * @pre Argument {@code other} is not {@code null}
+	 * 		| other != null
+	 * @post The result is true if the x-value of this point and the given point are equal and the y-value of this point and the given point are equal.
 	 * 		| result == (this.getX() == other.getX() && this.getY() == other.getY())
-	 * @post This point has remained unchanged.
-	 * 		| this == old(this)
-	 * @post The other given point has remained unchanged.
-	 * 		| other == old(other)
 	 */
 	public boolean equals(IntPoint other) {
 		return (x == other.getX() && y == other.getY());
 	}
 	
 	/**
-	 * Returns a new point which is the addition of this point with the given vector.
+	 * Returns a new {@code IntPoint} object which is the addition of this {@code IntPoint} with the given {@code IntVector}.
 	 *
 	 * @inspects | this
 	 * @inspects | other
 	 * @creates | result
 	 *
-	 * @throws IllegalArgumentException if the addition of the given vector to this point leads to an arithmetic overflow for the x-value. 
-     * @throws IllegalArgumentException if the addition of the given vector to this point leads to an arithmetic overflow for the y-value.
+	 * @pre The addition of the given vector to this point may not lead to an arithmetic overflow or underflow.
+	 * 		| !(this.getX() > 0 ? Integer.MAX_VALUE - this.getX() < other.getX() : Integer.MIN_VALUE - this.getX() > other.getX()) &&
+	 * 		| !(this.getY() > 0 ? Integer.MAX_VALUE - this.getY() < other.getY() : Integer.MIN_VALUE - this.getY() > other.getY())
      * 
 	 * @post The resulting point is the sum of this point and the given vector
 	 * 		| (result.getX() == (this.getX() + other.getX())) && (result.getY() == (this.getY() + other.getY()))
-	 * @post This point has remained unchanged.
-	 * 		| this == old(this)
-	 * @post The other given point has remained unchanged.
-	 * 		| other == old(other)
 	 */
 	public IntPoint plus(IntVector other) {
 		if (this.getX() > 0
@@ -91,15 +85,11 @@ public class IntPoint {
 	 * @inspects | other
 	 * @creates | result
 	 *
-	 * @throws IllegalArgumentException if the difference between this point and the given point leads to an arithmetic overflow/underflow for the x-value. 
-	 * @throws IllegalArgumentException if the difference between this point and the given point leads to an arithmetic overflow/underflow for the y-value. 
-     * 
+	 * @pre The addition of the given vector to this point may not lead to an arithmetic overflow or underflow.
+	 * 		| !(this.getX() > 0 ? Integer.MIN_VALUE + this.getX() > other.getX() : Integer.MAX_VALUE + this.getX() < other.getX()) &&
+	 * 		| !(this.getY() > 0 ? Integer.MIN_VALUE + this.getY() > other.getY() : Integer.MAX_VALUE + this.getY() < other.getY())
 	 * @post The resulting point is the sum of this point and the given vector
 	 * 		| (result.getX() == (this.getX() - other.getX())) && (result.getY() == (this.getY() - other.getY()))
-	 * @post This point has remained unchanged.
-	 * 		| this == old(this)
-	 * @post The other given point has remained unchanged.
-	 * 		| other == old(other)
 	 */
 	public IntVector minus(IntPoint other) {
 		if (this.getX() > 0
@@ -121,15 +111,17 @@ public class IntPoint {
 	/**
 	 * Returns true if and only if this point is on open line segment bc. An open line segment does not include its endpoints.
 	 * 
-	 * @inspects this
-	 * @inspects b
-	 * @inspects c
-	 * @creates result
+	 * @inspects | this
+	 * @inspects | b
+	 * @inspects | c
 	 * 
-	 * @post This point has remained unchanged.
-	 * 		| this == old(this)
-	 * @post The other given points have remained unchanged.
-	 * 		| b == old(b) && c == old(c)
+	 * @post Returns true if the area made up by the 3 points equals zero and this point lies in between the two given points.
+	 * 		| result == ((this.getX() * (b.getY() - c.getY())
+	 * 		|			+ b.getX() * (c.getY() - this.getY())
+	 * 		|			+ c.getX() * (this.getY() - b.getY()) == 0) &&
+	 * 		| (Math.min(b.getX(), c.getX()) < this.getX() && this.getX() < Math.max(b.getX(), c.getX()) ||
+	 * 		| Math.min(b.getY(), c.getY()) < this.getY() && this.getY() < Math.max(b.getY(), c.getY())))
+	 * 
 	 */
 	public boolean isOnLineSegment(IntPoint b, IntPoint c) {
 		IntVector ba = this.minus(b);
@@ -159,15 +151,13 @@ public class IntPoint {
 	/**
 	 * Returns a new point whose x-value and y-value are the double representation of the integer x-value and integer y-value of this vector.
 	 * 
-	 * @inspects this
-	 * @creates result
+	 * @inspects | this
+	 * @creates | result
 	 * 
 	 * @post The x-value of the result is equal to the x-value of this point.
 	 * 		| result.getX() == this.getX()
 	 * @post The y-value of the result is equal to the y-value of this point.
 	 * 		| result.getY() == this.getY()
-	 * @post This point has remained unchanged.
-	 * 		| this == old(this)
 	 */
 	public DoublePoint asDoublePoint() {
 		double xDouble = (double) this.getX();

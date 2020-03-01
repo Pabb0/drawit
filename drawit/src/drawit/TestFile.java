@@ -98,7 +98,7 @@ class TestFile {
 		IntPoint iPoint15 = new IntPoint(0, 0);
 		IntPoint iPoint16 = new IntPoint(200, 200);
 		IntPoint iPoint17 = new IntPoint(175, 125);
-		IntPoint iPoint18 = new IntPoint(0, 150);
+		IntPoint iPoint18 = new IntPoint(-200, 200);
 		
 		//IntPoint iPoint19 = new IntPoint(Integer.MAX_VALUE - 20, 200);
 		//IntPoint iPoint20 = new IntPoint(-70, 200);
@@ -109,7 +109,11 @@ class TestFile {
 		IntVector iDiff4 = iPoint1.minus(iPoint5);
 		//IntVector iDiff5 = iPoint19.minus(iPoint20);
 
-		
+		IntPoint iAdd1 = iPoint1.plus(iVector1);
+		IntPoint iAdd2 = iPoint2.plus(iVector2);
+		IntPoint iAdd3 = iPoint3.plus(iVector3);
+		IntPoint iAdd4 = iPoint4.plus(iVector4);
+
 
 
 
@@ -201,8 +205,9 @@ class TestFile {
 	    assert polygon1.getVertices()[2] == iPoint11;
 	    assert polygon1.getVertices()[3] == iPoint12;
 	    assert polygon1.contains(iPoint13) == true;
-	    assert polygon1.contains(iPoint14) == true;
 	    assert polygon1.contains(iPoint15) == false;
+
+	    assert polygon1.contains(iPoint14) == true;
 	    assert polygon1.contains(iPoint16) == true;
 	    assert polygon1.contains(iPoint17) == true;
 
@@ -211,5 +216,7 @@ class TestFile {
 	    assert polygon2.contains(iPoint18) == false;
 
 	    System.out.println(polygon1.getDrawingCommands());
+	    
+	    IntPoint test = new IntPoint(1, 1);
 	}
 }

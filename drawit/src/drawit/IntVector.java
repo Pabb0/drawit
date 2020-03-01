@@ -2,6 +2,7 @@ package drawit;
 
 /**
  * Each instance of this class represents a vector in 2D-space with integer values.
+ * 
  * @immutable
  */
 public class IntVector {
@@ -36,14 +37,11 @@ public class IntVector {
 	 * 
 	 * @inspects | this
 	 * @inspects | other
-	 * @creates | result
 	 * 
-	 * @post 
+	 * @pre Argument {@code other} is not {@code null}.
+	 * 		other != null
+	 * @post The result equals the dot product of this vector with the given vector.
 	 * 		| result == (long) (this.getX() * other.getX()) + (long) (this.getY() * other.getY())
-	 * @post This vector has remained unchanged.
-	 * 		| this == old(this)
-	 * @post The other given vector has remained unchanged.
-	 * 		| other == old(other)
 	 */
 	// There will never be overflow when converting to long
 	public long dotProduct(IntVector other) {
@@ -55,14 +53,11 @@ public class IntVector {
 	 * 
 	 * @inspects | this
 	 * @inspects | other
-	 * @creates | result
-	 * 
-	 * @post 
+	 *
+	 * @pre Argument {@code other} is not {@code null}.
+	 * 		other != null
+	 * @post The result equals the cross product of this vector with the given vector
 	 * 		| result == (long) (this.getX() * other.getY()) - (long) (this.getY() * other.getX())
-	 * @post This vector has remained unchanged.
-	 * 		| this == old(this)
-	 * @post The other given vector has remained unchanged.
-	 * 		| other == old(other)
 	 */
 	// There will never be overflow when converting to long
 	public long crossProduct(IntVector other) {
@@ -74,14 +69,11 @@ public class IntVector {
 	 * 
 	 * @inspects | this
 	 * @inspects | other
-	 * @creates | result
 	 * 
+	 * @pre Argument {@code other} is not {@code null}.
+	 * 		other != null
 	 * @post 
 	 * 		| result == (this.crossProduct(other) == 0)
-	 * @post This vector has remained unchanged.
-	 * 		| this == old(this)
-	 * @post The other given vector has remained unchanged.
-	 * 		| other == old(other)
 	 */
 	public boolean isCollinearWith(IntVector other) {
 		return (this.crossProduct(other) == 0);
