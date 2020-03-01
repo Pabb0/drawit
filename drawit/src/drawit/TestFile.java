@@ -181,7 +181,7 @@ class TestFile {
 	    RoundedPolygon polygon1 = new RoundedPolygon();
 	    polygon1.setVertices(iPointArray5);
 	    polygon1.setRadius(10);
-	    assert polygon1.getVertices() == iPointArray5;
+	    assert Arrays.equals(polygon1.getVertices(), iPointArray5);
 	    assert polygon1.getRadius() == 10;
 	    polygon1.remove(0);
 	    assert polygon1.getVertices().length == 3;

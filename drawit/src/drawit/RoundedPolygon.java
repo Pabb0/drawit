@@ -1,40 +1,82 @@
 package drawit;
 
+import java.util.Arrays;
+
+/**
+ * An instance of this class is a mutable abstraction storing a rounded polygon defined by a set of 2D points with integer coordinates and a nonnegative corner radius
+ * 
+ * @invar This object's radius is larger than or equal to zero
+ * 		| this.getRadius() >= 0
+ * 
+ */
 public class RoundedPolygon {
+	/**
+	 * @invar | radius >= 0
+	 */
 	private int radius;
 	private IntPoint[] vertices;
 
 	public RoundedPolygon() {}
 
 	public IntPoint[] getVertices() {
-		return vertices;
+		return PointArrays.copy(vertices);
 	}
 	
 	public int getRadius() {
 		return radius;
 	}
-	
+	/**
+	 * @mutates | this
+	 * 
+	 * @post Arrays.equals(this.getVertices(), newVertices)
+	 */
 	public void setVertices(IntPoint[] newVertices) {
-		vertices = newVertices;
+		vertices = PointArrays.copy(newVertices);
 	}
 	
 	/**
+	 * @mutates | this
+	 * 
 	 * @pre The radius is larger than or equal to zero
 	 * 		| newRadius >= 0
+	 * @post | this.getRadius() == newRadius
 	 */
 	public void setRadius(int newRadius) {
-		System.out.println(newRadius);
 		radius = newRadius;
 	}
 	
+	/**
+	 * Inserts the given point at the given index of this object.
+	 * 
+	 * @mutates | this
+	 * 
+	 */
 	public void insert(int index, IntPoint point) {
 		vertices = PointArrays.insert(vertices, index, point);
 	}
 	
+	/**
+	 * Removes the point at the given index of this object.
+	 *
+	 * @mutates | this
+	 * 
+	 */
 	public void remove(int index) {
 		vertices = PointArrays.remove(vertices, index);
 	}
 	
+	/**
+	 * Replaces the point at the given index of this object with the given point.
+	 * 
+	 * @mutates | this
+	 * 
+	 * @post
+	 *     | this.getVertices().length == old(this.getVertices().length) &&
+	 *     | Arrays.equals(this.getVertices(), 0, index, old(this.getVertices()), 0, index) &&
+	 *     | this.getVertices()[index] == point &&
+	 *     | Arrays.equals(this.getVertices(), index + 1, this.getVertices().length, old(this.getVertices()), index + 1, this.getVertices().length)    
+	 * 
+	 */
 	public void update(int index, IntPoint point) {
 		vertices = PointArrays.update(vertices, index, point);
 	}

@@ -12,6 +12,7 @@ public class IntVector {
 	 * Initializes this object with the given x-value and y-value.
 	 * 
 	 * @mutates | this
+	 * 
 	 * @post This object's x-value equals the given x-value.
 	 * 		| this.getX() == xGiven
 	 * @post This object's y-value equals the given y-value.
