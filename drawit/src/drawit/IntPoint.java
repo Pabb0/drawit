@@ -37,7 +37,7 @@ public class IntPoint {
 	 * @inspects | this
 	 * @inspects | other
 	 * 
-	 * @pre Argument {@code other} is not {@code null}
+	 * @pre Argument {@code other} is not {@code null}.
 	 * 		| other != null
 	 * @post The result is true if the x-value of this point and the given point are equal and the y-value of this point and the given point are equal.
 	 * 		| result == (this.getX() == other.getX() && this.getY() == other.getY())
@@ -53,6 +53,8 @@ public class IntPoint {
 	 * @inspects | other
 	 * @creates | result
 	 *
+	 * @pre Argument {@code other} is not {@code null}.
+	 * 		| other != null
 	 * @pre The addition of the given vector to this point may not lead to an arithmetic overflow or underflow.
 	 * 		| !(this.getX() > 0 ? Integer.MAX_VALUE - this.getX() < other.getX() : Integer.MIN_VALUE - this.getX() > other.getX()) &&
 	 * 		| !(this.getY() > 0 ? Integer.MAX_VALUE - this.getY() < other.getY() : Integer.MIN_VALUE - this.getY() > other.getY())
@@ -84,7 +86,9 @@ public class IntPoint {
 	 * @inspects | this
 	 * @inspects | other
 	 * @creates | result
-	 *
+	 * 
+	 * @pre Argument {@code other} is not {@code null}.
+	 * 		| other != null
 	 * @pre The addition of the given vector to this point may not lead to an arithmetic overflow or underflow.
 	 * 		| !(this.getX() > 0 ? Integer.MIN_VALUE + this.getX() > other.getX() : Integer.MAX_VALUE + this.getX() < other.getX()) &&
 	 * 		| !(this.getY() > 0 ? Integer.MIN_VALUE + this.getY() > other.getY() : Integer.MAX_VALUE + this.getY() < other.getY())
@@ -116,7 +120,12 @@ public class IntPoint {
 	 * @inspects | b
 	 * @inspects | c
 	 * 
-	 * @post Returns true if the area made up by the 3 points equals zero and this point lies in between the two given points.
+	 * @pre Argument {@code b} is not {@code null}.
+	 * 		| b != null
+	 * @pre Argument {@code c} is not {@code null}.
+	 * 		| c != null
+	 * 
+	 * @post Returns true if the 3 points are collinear equals zero and this point lies in between the two given points.
 	 * 		| result == ((this.getX() * (b.getY() - c.getY())
 	 * 		|			+ b.getX() * (c.getY() - this.getY())
 	 * 		|			+ c.getX() * (this.getY() - b.getY()) == 0) &&

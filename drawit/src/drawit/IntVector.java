@@ -79,6 +79,8 @@ public class IntVector {
 		return (this.crossProduct(other) == 0);
 	}
 
+	// No documentation required
+	
 	public DoubleVector asDoubleVector() {
 		double xDouble = (double) this.getX();
 		double yDouble = (double) this.getY();

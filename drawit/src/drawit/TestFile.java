@@ -216,7 +216,5 @@ class TestFile {
 
 	    System.out.println(polygon1.getDrawingCommands());
 	    
-	    
-		    
 	}
 }
