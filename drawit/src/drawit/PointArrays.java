@@ -119,7 +119,7 @@ public class PointArrays {
 				if (points[j].isOnLineSegment(points[i], points[(i + 1) % points.length])) {
 					return "The given array of points does not define a proper polygon because at least one vertex is on any edge.";
 				}
-				if (i != j && IntPoint.lineSegmentIntersect(points[i], points[(i + 1) % points.length], points[j], points[(j + 1) % points.length])) {
+				if (i != j && IntPoint.lineSegmentsIntersect(points[i], points[(i + 1) % points.length], points[j], points[(j + 1) % points.length])) {
 					return "The given array of points does not define a proper polygon because at least two edges intersect.";
 				}
 			}

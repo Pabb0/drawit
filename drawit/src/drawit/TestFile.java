@@ -127,9 +127,9 @@ class TestFile {
 		assert iPoint1.isOnLineSegment(iPoint3, iPoint4) == true;
 		assert iPoint2.isOnLineSegment(iPoint3, iPoint4) == false;
 		assert iPoint7.isOnLineSegment(iPoint1, iPoint6) == true;
-		assert IntPoint.lineSegmentIntersect(iPoint1, iPoint3, iPoint2, iPoint4) == false;
-		assert IntPoint.lineSegmentIntersect(iPoint1, iPoint2, iPoint3, iPoint4) == false;
-		assert IntPoint.lineSegmentIntersect(iPoint1, iPoint5, iPoint4, iPoint6) == true;
+		assert IntPoint.lineSegmentsIntersect(iPoint1, iPoint3, iPoint2, iPoint4) == false;
+		assert IntPoint.lineSegmentsIntersect(iPoint1, iPoint2, iPoint3, iPoint4) == false;
+		assert IntPoint.lineSegmentsIntersect(iPoint1, iPoint5, iPoint4, iPoint6) == true;
 		
 		
 		IntPoint[] iPointArray1 = {iPoint1, iPoint4, iPoint5, iPoint6};
@@ -206,7 +206,6 @@ class TestFile {
 	    assert polygon1.getVertices()[3] == iPoint12;
 	    assert polygon1.contains(iPoint13) == true;
 	    assert polygon1.contains(iPoint15) == false;
-
 	    assert polygon1.contains(iPoint14) == true;
 	    assert polygon1.contains(iPoint16) == true;
 	    assert polygon1.contains(iPoint17) == true;
@@ -217,6 +216,7 @@ class TestFile {
 
 	    System.out.println(polygon1.getDrawingCommands());
 	    
-	    IntPoint test = new IntPoint(1, 1);
+	    
+		    
 	}
 }

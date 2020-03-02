@@ -108,6 +108,7 @@ public class IntPoint {
 
 		return new IntVector(xDiff, yDiff);
 	}
+	
 	/**
 	 * Returns true if and only if this point is on open line segment bc. An open line segment does not include its endpoints.
 	 * 
@@ -133,8 +134,9 @@ public class IntPoint {
 		
 		return (ba.dotProduct(bc) > 0 && ba.dotProduct(bc) < bc.dotProduct(bc));
 	}
-
-	public static boolean lineSegmentIntersect(IntPoint a, IntPoint b, IntPoint c, IntPoint d) {
+	
+	// No documentation required
+	public static boolean lineSegmentsIntersect(IntPoint a, IntPoint b, IntPoint c, IntPoint d) {
 		IntVector ab = b.minus(a);
 		IntVector ac = c.minus(a);
 		IntVector ad = d.minus(a);

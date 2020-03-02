@@ -7,7 +7,6 @@ import java.util.Arrays;
  * 
  * @invar This object's radius is larger than or equal to zero
  * 		| this.getRadius() >= 0
- * 
  */
 public class RoundedPolygon {
 	/**
@@ -136,7 +135,7 @@ public class RoundedPolygon {
 			if (point.equals(firstPoint)  || point.isOnLineSegment(firstPoint, nextPoint)) {
 				return true;
 			}
-			if ((point.getY() == firstPoint.getY() && point.getX() < firstPoint.getX()) || IntPoint.lineSegmentIntersect(firstPoint, nextPoint, point, pointOnRight)) {
+			if ((point.getY() == firstPoint.getY() && point.getX() < firstPoint.getX()) || IntPoint.lineSegmentsIntersect(firstPoint, nextPoint, point, pointOnRight)) {
 				result = !result;
 			}
 		}
