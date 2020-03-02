@@ -183,6 +183,7 @@ class TestFile {
 		
 
 	    RoundedPolygon polygon1 = new RoundedPolygon();
+	    System.out.println(polygon1.getVertices());
 	    polygon1.setVertices(iPointArray5);
 	    polygon1.setRadius(10);
 	    assert Arrays.equals(polygon1.getVertices(), iPointArray5);
@@ -215,6 +216,5 @@ class TestFile {
 	    assert polygon2.contains(iPoint18) == false;
 
 	    System.out.println(polygon1.getDrawingCommands());
-	    
 	}
 }

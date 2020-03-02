@@ -14,6 +14,8 @@ public class PointArrays {
 	 * @inspects | points
 	 * @creates | result
 	 * 
+	 * @pre Argument {@code points} is not {@code null}.
+
 	 * @post The contents of the given array and the result are equals.
 	 * 		| points.length == result.length &&
 	 * 		| Arrays.equals(points, 0, points.length, result, 0, result.length)
@@ -34,6 +36,12 @@ public class PointArrays {
 	 * @inspects | points
 	 * @creates | result
 	 * 
+	 * @pre Argument {@code points} is not {@code null}.
+	 * 		| points != null
+	 * @pre Argument {@code point} is not {@code null}.
+	 * 		| point != null
+	 * @pre The given index is between 0 (inclusive) and the length of the array (inclusive)
+	 * 		| 0 <= index && index <= points.length
 	 * @post The new array is equal to the given array with the given point inserted at the given index
 	 *		| points.length + 1 == result.length &&
 	 *		| Arrays.equals(points, 0, index, result, 0, index) &&
@@ -58,6 +66,10 @@ public class PointArrays {
 	 * @inspects | points
 	 * @creates | result
 	 * 
+	 * @pre Argument {@code points} is not {@code null}.
+	 * 		| points != null
+	 * @pre The given index is between 0 (inclusive) and the length of the array (exclusive)
+	 * 		| 0 <= index && index < points.length
 	 * @post The new array is equal to the given array with point at the given index from the given array removed.
 	 *		| points.length - 1 == result.length &&
 	 *		| Arrays.equals(points, 0, index, result, 0, index) &&
@@ -82,6 +94,12 @@ public class PointArrays {
 	 * @inspects | points
 	 * @creates | result
 	 * 
+	 * @pre Argument {@code points} is not {@code null}.
+	 * 		| points != null
+	 * @pre Argument {@code point} is not {@code null}.
+	 * 		| point != null
+	 * @pre The given index is between 0 (inclusive) and the length of the array (exclusive)
+	 * 		| 0 <= index && index < points.length
 	 * @post The new array is equal to the given array with the given point replacing the point at the given index of the given array.
 	 *		| points.length == result.length &&
 	 *		| Arrays.equals(points, 0, index, result, 0, index) &&
@@ -106,6 +124,8 @@ public class PointArrays {
 	 * @inspects | points
 	 * @creates | result
 	 * 
+	 * @pre Argument {@code points} is not {@code null}.
+	 * 		| points != null
 	 */
 	public static String checkDefinesProperPolygon(IntPoint[] points) {
 		if (points.length <= 2) {

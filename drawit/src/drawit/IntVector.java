@@ -72,7 +72,7 @@ public class IntVector {
 	 * 
 	 * @pre Argument {@code other} is not {@code null}.
 	 * 		other != null
-	 * @post 
+	 * @post Result is true if and only if the cross product with this vector and the other vector is zero.
 	 * 		| result == (this.crossProduct(other) == 0)
 	 */
 	public boolean isCollinearWith(IntVector other) {

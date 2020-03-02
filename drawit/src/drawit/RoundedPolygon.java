@@ -7,15 +7,29 @@ import java.util.Arrays;
  * 
  * @invar This object's radius is larger than or equal to zero
  * 		| this.getRadius() >= 0
+ * @invar 
+ * 		| this.getVertices() != null
+ * @invar 
+ * 		| Arrays.stream(this.getVertices()).allMatch(e -> e != null)
  */
 public class RoundedPolygon {
 	/**
-	 * @invar | radius >= 0
+	 * @invar 
+	 * 		| radius >= 0
+	 * @invar 
+	 * 		| vertices != null
+	 * @invar 
+	 * 		| Arrays.stream(vertices).allMatch(e -> e != null)
 	 */
 	private int radius;
 	private IntPoint[] vertices;
-
-	public RoundedPolygon() {}
+	
+	/**
+	 * @mutates | this
+     * @post This object's list of vertices is empty.
+     *		| getVertices().length == 0
+	 */
+	public RoundedPolygon() {vertices = new IntPoint[0];}
 
 	public IntPoint[] getVertices() {
 		return PointArrays.copy(vertices);
@@ -28,12 +42,18 @@ public class RoundedPolygon {
 	/**
 	 * @mutates | this
 	 * 
+	 * @throws IllegalArgumentException if {@code newVertices} is {@code null}.
+	 * 		| newVertices == null
 	 * @throws IllegalArgumentException if the given array of vertices leads to a non-proper polygon.
 	 * 		| PointArrays.checkDefinesProperPolygon(newVertices) != null
+	 * 
 	 * @post This object's vertices equal the given vertices.
 	 * 		| Arrays.equals(this.getVertices(), newVertices)
 	 */
 	public void setVertices(IntPoint[] newVertices) {
+		if (newVertices == null) {
+			throw new IllegalArgumentException("newVertices is null.");
+		}
 		if (PointArrays.checkDefinesProperPolygon(newVertices) != null) {
 			throw new IllegalArgumentException("The given array of vertices leads to a non-proper polygon.");
 		}
@@ -45,6 +65,7 @@ public class RoundedPolygon {
 	 * 
 	 * @throws IllegalArgumentException if the given radius is less than 0.
 	 * 		| newRadius < 0
+	 * 
 	 * @post  This object's radius equals the given radius.
 	 * 		| this.getRadius() == newRadius
 	 */
@@ -60,8 +81,12 @@ public class RoundedPolygon {
 	 * 
 	 * @mutates | this
 	 * 
+	 * @throws IllegalArgumentException if {@code point} is {@code null}.
+	 * 		| point == null
 	 * @throws IllegalArgumentException if inserting the given point at the given index leads to a non-proper polygon
 	 * 		| PointArrays.checkDefinesProperPolygon(PointArrays.insert(vertices, index, point)) != null
+	 * @throws IllegalArgumentException if the given index is not between 0 (inclusive) and the length of this array's length (inclusive).
+	 * 		| 0 <= index && index <= points.length
 	 * 
 	 * @post This object's array of {@code IntPoint} objects equals the old array of {@code IntPoint} objects with the given point inserted at the given index.	 
 	 *     	| this.getVertices().length == old(this.getVertices().length) + 1 &&
@@ -70,6 +95,12 @@ public class RoundedPolygon {
 	 *     	| Arrays.equals(this.getVertices(), index + 1, this.getVertices().length, old(this.getVertices()), index, old(this.getVertices().length))    
 	 */
 	public void insert(int index, IntPoint point) {
+		if (point == null) {
+			throw new IllegalArgumentException("point is null.");
+		}
+		if (!(0 <= index && index <= vertices.length)) {
+			throw new IllegalArgumentException("The given index is out of range.");
+		}
 		IntPoint[] newVertices = PointArrays.insert(vertices, index, point);
 		if (PointArrays.checkDefinesProperPolygon(newVertices) != null) {
 			throw new IllegalArgumentException("Inserting the given point at the given index leads to a non-proper polygon");
@@ -85,15 +116,21 @@ public class RoundedPolygon {
 	 * 
 	 * @throws IllegalArgumentException if removing the point at the given index leads to a non-proper polygon.
 	 * 		| PointArrays.checkDefinesProperPolygon(PointArrays.remove(vertices, index)) != null
+	 * @throws IllegalArgumentException if the given index is not between 0 (inclusive) and the length of this array's length (exclusive).
+	 * 		| 0 <= index && index < points.length
+	 * 
 	 * @post This object's array of {@code IntPoint} objects equals the old array of {@code IntPoint} objects with the point at the given index removed.	 
 	 *		| this.getVertices().length == old(this.getVertices().length) - 1 &&
 	 *		| Arrays.equals(this.getVertices(), 0, index, old(this.getVertices()), 0, index) &&
 	 *		| Arrays.equals(this.getVertices(), index, this.getVertices().length, old(this.getVertices()), index + 1, old(this.getVertices().length))    
 	 */
 	public void remove(int index) {
+		if (!(0 <= index && index < vertices.length)) {
+			throw new IllegalArgumentException("The given index is out of range.");
+		}
 		IntPoint[] newVertices = PointArrays.remove(vertices, index);
 		if (PointArrays.checkDefinesProperPolygon(newVertices) != null) {
-			throw new IllegalArgumentException("Removing the point at the given index leads to a non-proper polygon");
+			throw new IllegalArgumentException("Removing the point at the given index leads to a non-proper polygon.");
 		} else {
 			vertices = newVertices;
 		}
@@ -104,9 +141,13 @@ public class RoundedPolygon {
 	 * 
 	 * @mutates | this
 	 * 
+	 * @throws IllegalArgumentException if {@code point} is {@code null}.
+	 * 		| point == null
 	 * @throws IllegalArgumentException if replacing the point at the given index by the given point leads to a non-proper polygon.
 	 * 		| PointArrays.checkDefinesProperPolygon(PointArrays.update(vertices, index, point)) != null
-	 * 
+	 * @throws IllegalArgumentException if the given index is not between 0 (inclusive) and the length of this array's length (exclusive).
+	 * 		| 0 <= index && index < points.length
+	 *  
 	 * @post This object's array of {@code IntPoint} objects equals the old array of {@code IntPoint} objects with the given point taking the place of the point at the given index.	 
 	 *		| this.getVertices().length == old(this.getVertices().length) &&
 	 *		| Arrays.equals(this.getVertices(), 0, index, old(this.getVertices()), 0, index) &&
@@ -115,9 +156,15 @@ public class RoundedPolygon {
 	 * 
 	 */
 	public void update(int index, IntPoint point) {
+		if (!(0 <= index && index < vertices.length)) {
+			throw new IllegalArgumentException("The given index is out of range.");
+		}
+		if (point == null) {
+			throw new IllegalArgumentException("point is null.");
+		}
 		IntPoint[] newVertices = PointArrays.update(vertices, index, point);
 		if (PointArrays.checkDefinesProperPolygon(newVertices) != null) {
-			throw new IllegalArgumentException("Replacing the point at the given index by the given point leads to a non-proper polygon");
+			throw new IllegalArgumentException("Replacing the point at the given index by the given point leads to a non-proper polygon.");
 		} else {
 			vertices = newVertices;
 		}	}
