@@ -30,7 +30,10 @@ public class RoundedPolygon {
      * @post This object's list of vertices is empty.
      *		| getVertices().length == 0
 	 */
-	public RoundedPolygon() {vertices = new IntPoint[0];}
+	public RoundedPolygon() {
+		radius = 0;
+		vertices = new IntPoint[0];
+		}
 
 	public IntPoint[] getVertices() {
 		return PointArrays.copy(vertices);
