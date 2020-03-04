@@ -43,7 +43,7 @@ public class IntVector {
 	 * @post The result equals the dot product of this vector with the given vector.
 	 * 		| result == (long) (this.getX() * other.getX()) + (long) (this.getY() * other.getY())
 	 */
-	// There will never be overflow when converting to long
+	// There will never be overflow when converting to long (Integer.MAX_VALUE * Integer.MAX_VALUE * 2 < Long.MAX_VALUE)
 	public long dotProduct(IntVector other) {
 		return (long) (this.getX() * other.getX()) + (long) (this.getY() * other.getY());
 	}
@@ -59,7 +59,7 @@ public class IntVector {
 	 * @post The result equals the cross product of this vector with the given vector
 	 * 		| result == (long) (this.getX() * other.getY()) - (long) (this.getY() * other.getX())
 	 */
-	// There will never be overflow when converting to long
+	// There will never be overflow when converting to long (Integer.MAX_VALUE * Integer.MAX_VALUE * 2 < Long.MAX_VALUE)
 	public long crossProduct(IntVector other) {
 		return (long) (x * other.getY()) - (long) (y * other.getX());
 	}

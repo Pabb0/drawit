@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
+
 class TestFile {
 
 	@Test
@@ -170,15 +171,20 @@ class TestFile {
 		String message6 = PointArrays.checkDefinesProperPolygon(iPointArray6);
 
 		assert message1 == null;
-		assert message2 == "The given array of points does not define a proper polygon "
-				+ "because at least two vertices coincide.";
-		assert message3 == "The given array of points does not define a proper polygon "
-				+ "because at least one vertex is on any edge.";
-		assert message4 == "The given array of points does not define a proper polygon "
-				+ "because at least two edges intersect.";
+		assert message2.equals( "The given array of points does not define a proper polygon "
+				+ "because at least two vertices coincide. "
+				+ "(vertex 0 and vertex 1 from the array).");
+		System.out.println(message6);
+		assert message3.equals("The given array of points does not define a proper polygon "
+				+ "because at least one vertex is on any edge. "
+				+ "(vertex 2 is on the line between vertex 4 and vertex 0 ).");
+		assert message4.equals("The given array of points does not define a proper polygon "
+				+ "because at least two edges intersect. "
+				+ "(The line between vertex 0 and vertex 1 intersects with the line between vertex2 and vertex 3)."); 
 		assert message5 == null;
-		assert message6 == "The given array of points does not define a proper polygon "
-				+ "because the array contains two or less points.";
+		assert message6.equals("The given array of points does not define a proper polygon "
+				+ "because the array contains two or less points. "
+				+ "(The given array contains 2 points).");
 
 		
 
@@ -215,6 +221,6 @@ class TestFile {
 	    polygon2.setVertices(iPointArray7);
 	    assert polygon2.contains(iPoint18) == false;
 
-	    System.out.println(polygon1.getDrawingCommands());
+	    System.out.println(polygon1.getDrawingCommands());	    
 	}
 }

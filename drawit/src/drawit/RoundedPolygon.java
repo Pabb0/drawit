@@ -20,6 +20,7 @@ public class RoundedPolygon {
 	 * 		| vertices != null
 	 * @invar 
 	 * 		| Arrays.stream(vertices).allMatch(e -> e != null)
+	 * @representationObject
 	 */
 	private int radius;
 	private IntPoint[] vertices;
