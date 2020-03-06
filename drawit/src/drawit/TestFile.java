@@ -11,6 +11,10 @@ class TestFile {
 
 	@Test
 	void test() {
+		
+		//
+		// DoubleVector tests
+		//
 		DoubleVector dVector1 = new DoubleVector(2.0, 0.0);
 		DoubleVector dVector2 = new DoubleVector(1.0, 1.0);	
 		DoubleVector dVector3 = new DoubleVector(2.5, 1.3);
@@ -40,6 +44,9 @@ class TestFile {
 		assert dVector1.asAngle() == 0.0;
 		assert dVector2.asAngle() == Math.PI / 4;
 		
+		//
+		// DoublePoint tests
+		//
 
 		DoublePoint dPoint1 = new DoublePoint(2.0, 0.0);
 		DoublePoint dPoint2 = new DoublePoint(3.14, 2.70);
@@ -61,7 +68,10 @@ class TestFile {
 		assert IntDPoint2.getY() == 3;
 		assert IntDPoint4.getX() == 6;
 		assert IntDPoint4.getY() == 1;
-
+		
+		//
+		// IntVector tests
+		//
 
 		IntVector iVector1 = new IntVector(1,2);
 		IntVector iVector2 = new IntVector(5,5);
@@ -69,7 +79,6 @@ class TestFile {
 		IntVector iVector4 = new IntVector(11,22);
 		IntVector iVector5 = new IntVector(1,2);
 
-		
 		assert iVector1.getX() == 1;
 		assert iVector3.getY() == 4;
 		assert iVector1.dotProduct(iVector2) == 15;
@@ -80,7 +89,9 @@ class TestFile {
 		assert iToDVector.getX() == 1.0;
 		assert iToDVector.getY() == 2.0;
 		
-
+		//
+		// IntPoint tests
+		//
 		IntPoint iPoint1 = new IntPoint(2, 0);
 		IntPoint iPoint1Copy = new IntPoint(2, 0);
 		IntPoint iPoint2 = new IntPoint(-3, 4);
@@ -101,13 +112,22 @@ class TestFile {
 		IntPoint iPoint17 = new IntPoint(175, 125);
 		IntPoint iPoint18 = new IntPoint(-200, 200);
 		
-		//IntPoint iPoint19 = new IntPoint(Integer.MAX_VALUE - 20, 200);
-		//IntPoint iPoint20 = new IntPoint(-70, 200);
-		
 		IntVector iDiff1 = iPoint1.minus(iPoint2);
 		IntVector iDiff2 = iPoint9.minus(iPoint10);
 		IntVector iDiff3 = iPoint9.minus(iPoint2);
 		IntVector iDiff4 = iPoint1.minus(iPoint5);
+		
+		assert iDiff1.getX() == 5;
+		assert iDiff2.getX() == -100;
+		assert iDiff3.getX() == 103;
+		assert iDiff4.getX() == 2;
+		assert iDiff1.getY() == -4;
+		assert iDiff2.getY() == 0;
+		assert iDiff3.getY() == 96;
+		assert iDiff4.getY() == -2;
+
+		//IntPoint iPoint19 = new IntPoint(Integer.MAX_VALUE - 20, 200);
+		//IntPoint iPoint20 = new IntPoint(-70, 200);
 		//IntVector iDiff5 = iPoint19.minus(iPoint20);
 
 		IntPoint iAdd1 = iPoint1.plus(iVector1);
@@ -115,8 +135,18 @@ class TestFile {
 		IntPoint iAdd3 = iPoint3.plus(iVector3);
 		IntPoint iAdd4 = iPoint4.plus(iVector4);
 
+		assert iAdd1.getX() == 3;
+		assert iAdd2.getX() == 2;
+		assert iAdd3.getX() == -1;
+		assert iAdd4.getX() == 14;
+		assert iAdd1.getY() == 2;
+		assert iAdd2.getY() == 9;
+		assert iAdd3.getY() == 2;
+		assert iAdd4.getY() == 24;
 
-
+		//IntPoint iPoint21 = new IntPoint(Integer.MAX_VALUE - 20, 200);
+		//IntVector iVector21 = new IntVector(70, 200);
+		//IntPoint iAdd5 = iPoint21.plus(iVector21);
 
 		assert iPoint1.getX() == 2;
 		assert iPoint1.getY() == 0;
@@ -132,7 +162,9 @@ class TestFile {
 		assert IntPoint.lineSegmentsIntersect(iPoint1, iPoint2, iPoint3, iPoint4) == false;
 		assert IntPoint.lineSegmentsIntersect(iPoint1, iPoint5, iPoint4, iPoint6) == true;
 		
-		
+		//
+		// PointArrays tests
+		//
 		IntPoint[] iPointArray1 = {iPoint1, iPoint4, iPoint5, iPoint6};
 		IntPoint[] iPointArray2 = {iPoint1, iPoint1, iPoint4, iPoint5, iPoint6};
 		IntPoint[] iPointArray3 = {iPoint1, iPoint4, iPoint7, iPoint5, iPoint6};
@@ -169,12 +201,13 @@ class TestFile {
 		String message4 = PointArrays.checkDefinesProperPolygon(iPointArray4);
 		String message5 = PointArrays.checkDefinesProperPolygon(iPointArray5);
 		String message6 = PointArrays.checkDefinesProperPolygon(iPointArray6);
+		String message7 = PointArrays.checkDefinesProperPolygon(iPointArray7);
+
 
 		assert message1 == null;
 		assert message2.equals( "The given array of points does not define a proper polygon "
 				+ "because at least two vertices coincide. "
 				+ "(vertex 0 and vertex 1 from the array).");
-		System.out.println(message6);
 		assert message3.equals("The given array of points does not define a proper polygon "
 				+ "because at least one vertex is on any edge. "
 				+ "(vertex 2 is on the line between vertex 4 and vertex 0 ).");
@@ -185,11 +218,11 @@ class TestFile {
 		assert message6.equals("The given array of points does not define a proper polygon "
 				+ "because the array contains two or less points. "
 				+ "(The given array contains 2 points).");
-
+		assert message7 == null;
 		
-
+		
+		// RoundedPolygon tests
 	    RoundedPolygon polygon1 = new RoundedPolygon();
-	    System.out.println(polygon1.getVertices());
 	    polygon1.setVertices(iPointArray5);
 	    polygon1.setRadius(10);
 	    assert Arrays.equals(polygon1.getVertices(), iPointArray5);
@@ -219,8 +252,10 @@ class TestFile {
 
 	    RoundedPolygon polygon2 = new RoundedPolygon();
 	    polygon2.setVertices(iPointArray7);
-	    assert polygon2.contains(iPoint18) == false;
 
+	  
+	    // Op papier tekenen of dit klopt.
 	    System.out.println(polygon1.getDrawingCommands());	    
+	    System.out.println(polygon2.getDrawingCommands());	    
 	}
 }
