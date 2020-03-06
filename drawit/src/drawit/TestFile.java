@@ -44,10 +44,10 @@ class TestFile {
 		assert dVector1.asAngle() == 0.0;
 		assert dVector2.asAngle() == Math.PI / 4;
 		
+		
 		//
 		// DoublePoint tests
 		//
-
 		DoublePoint dPoint1 = new DoublePoint(2.0, 0.0);
 		DoublePoint dPoint2 = new DoublePoint(3.14, 2.70);
 		DoublePoint dPoint3 = new DoublePoint(3.0, -0.5);
@@ -69,10 +69,10 @@ class TestFile {
 		assert IntDPoint4.getX() == 6;
 		assert IntDPoint4.getY() == 1;
 		
+		
 		//
 		// IntVector tests
 		//
-
 		IntVector iVector1 = new IntVector(1,2);
 		IntVector iVector2 = new IntVector(5,5);
 		IntVector iVector3 = new IntVector(-2,4);
@@ -88,6 +88,7 @@ class TestFile {
 		DoubleVector iToDVector = iVector1.asDoubleVector();
 		assert iToDVector.getX() == 1.0;
 		assert iToDVector.getY() == 2.0;
+		
 		
 		//
 		// IntPoint tests
@@ -162,6 +163,7 @@ class TestFile {
 		assert IntPoint.lineSegmentsIntersect(iPoint1, iPoint2, iPoint3, iPoint4) == false;
 		assert IntPoint.lineSegmentsIntersect(iPoint1, iPoint5, iPoint4, iPoint6) == true;
 		
+		
 		//
 		// PointArrays tests
 		//
@@ -221,7 +223,9 @@ class TestFile {
 		assert message7 == null;
 		
 		
+		//
 		// RoundedPolygon tests
+		//
 	    RoundedPolygon polygon1 = new RoundedPolygon();
 	    polygon1.setVertices(iPointArray5);
 	    polygon1.setRadius(10);

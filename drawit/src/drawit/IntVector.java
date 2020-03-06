@@ -37,7 +37,6 @@ public class IntVector {
 	 * 
 	 * @inspects | this
 	 * @inspects | other
-	 * 
 	 * @pre Argument {@code other} is not {@code null}.
 	 * 		other != null
 	 * @post The result equals the dot product of this vector with the given vector.
@@ -71,7 +70,7 @@ public class IntVector {
 	 * @inspects | other
 	 * 
 	 * @pre Argument {@code other} is not {@code null}.
-	 * 		other != null
+	 * 		| other != null
 	 * @post Result is true if and only if the cross product with this vector and the other vector is zero.
 	 * 		| result == (this.crossProduct(other) == 0)
 	 */
