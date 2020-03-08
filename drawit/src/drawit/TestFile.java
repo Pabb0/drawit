@@ -256,10 +256,11 @@ class TestFile {
 
 	    RoundedPolygon polygon2 = new RoundedPolygon();
 	    polygon2.setVertices(iPointArray7);
-
+	    
 	  
 	    // Op papier tekenen of dit klopt.
 	    System.out.println(polygon1.getDrawingCommands());	    
-	    System.out.println(polygon2.getDrawingCommands());	    
+	    System.out.println(polygon2.getDrawingCommands());
+	    
 	}
 }

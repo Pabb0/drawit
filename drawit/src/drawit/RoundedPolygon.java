@@ -27,6 +27,7 @@ public class RoundedPolygon {
 	
 	/**
 	 * @mutates | this
+	 * 
      * @post This object's list of vertices is empty.
      *		| getVertices().length == 0
 	 */
@@ -56,7 +57,7 @@ public class RoundedPolygon {
 	 */
 	public void setVertices(IntPoint[] newVertices) {
 		if (newVertices == null) {
-			throw new IllegalArgumentException("newVertices is null.");
+			throw new IllegalArgumentException("The given array of vertices is null.");
 		}
 		if (PointArrays.checkDefinesProperPolygon(newVertices) != null) {
 			throw new IllegalArgumentException("The given array of vertices leads to a non-proper polygon.");
@@ -107,7 +108,7 @@ public class RoundedPolygon {
 		}
 		IntPoint[] newVertices = PointArrays.insert(vertices, index, point);
 		if (PointArrays.checkDefinesProperPolygon(newVertices) != null) {
-			throw new IllegalArgumentException("Inserting the given point at the given index leads to a non-proper polygon");
+			throw new IllegalArgumentException("Inserting the given point at the given index leads to a non-proper polygon.");
 		} else {
 			vertices = newVertices;
 		}
@@ -171,7 +172,8 @@ public class RoundedPolygon {
 			throw new IllegalArgumentException("Replacing the point at the given index by the given point leads to a non-proper polygon.");
 		} else {
 			vertices = newVertices;
-		}	}
+		}	
+	}
 	
 	// No documentation required
 	public boolean contains(IntPoint point) {

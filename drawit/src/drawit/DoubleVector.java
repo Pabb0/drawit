@@ -1,12 +1,12 @@
 package drawit;
 
 public class DoubleVector {
-	private double x;
-	private double y;
+	private final double x;
+	private final double y;
 	
-	public DoubleVector(double xGiven, double yGiven) {
-		x = xGiven;
-		y = yGiven;
+	public DoubleVector(double x, double y) {
+		this.x = x;
+		this.y = y;
 	}
 
 	public double getX() {

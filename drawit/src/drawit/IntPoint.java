@@ -1,7 +1,7 @@
 package drawit;
 
 /**
- * Each instance of this class represents a point in 2D-space with integer values.
+ * Each instance of this class represents an immutable abstraction for a point in 2D-space with integer values.
  * @immutable
  */
 public class IntPoint {
@@ -14,13 +14,13 @@ public class IntPoint {
 	 * @mutates | this
 	 * 
 	 * @post This object's x-value equals the given x-value.
-	 * 		| this.getX() == xGiven
+	 * 		| this.getX() == x
 	 * @post This object's y-value equals the given y-value.
-	 * 		| this.getY() == yGiven
+	 * 		| this.getY() == y
 	 */
-	public IntPoint(int xGiven, int yGiven) {
-		x = xGiven;
-		y = yGiven;
+	public IntPoint(int x, int y) {
+		this.x = x;
+		this.y = y;
 	}
 
 	public int getX() {

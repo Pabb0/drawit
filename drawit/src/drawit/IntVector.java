@@ -15,13 +15,13 @@ public class IntVector {
 	 * @mutates | this
 	 * 
 	 * @post This object's x-value equals the given x-value.
-	 * 		| this.getX() == xGiven
+	 * 		| this.getX() == x
 	 * @post This object's y-value equals the given y-value.
-	 * 		| this.getY() == yGiven
+	 * 		| this.getY() == y
 	 */
-	public IntVector(int xGiven, int yGiven) {
-		x = xGiven;
-		y = yGiven;
+	public IntVector(int x, int y) {
+		this.x = x;
+		this.y = y;
 	}
 
 	public int getX() {
@@ -37,14 +37,15 @@ public class IntVector {
 	 * 
 	 * @inspects | this
 	 * @inspects | other
+	 * 
 	 * @pre Argument {@code other} is not {@code null}.
-	 * 		other != null
+	 * 		| other != null
 	 * @post The result equals the dot product of this vector with the given vector.
-	 * 		| result == (long) (this.getX() * other.getX()) + (long) (this.getY() * other.getY())
+	 * 		| result == (long)this.getX() * other.getX() + (long)this.getY() * other.getY()
 	 */
 	// There will never be overflow when converting to long (Integer.MAX_VALUE * Integer.MAX_VALUE * 2 < Long.MAX_VALUE)
 	public long dotProduct(IntVector other) {
-		return (long) (this.getX() * other.getX()) + (long) (this.getY() * other.getY());
+		return (long)x * other.getX() + (long)y * other.getY();
 	}
 
 	/**
@@ -54,13 +55,13 @@ public class IntVector {
 	 * @inspects | other
 	 *
 	 * @pre Argument {@code other} is not {@code null}.
-	 * 		other != null
+	 * 		| other != null
 	 * @post The result equals the cross product of this vector with the given vector
-	 * 		| result == (long) (this.getX() * other.getY()) - (long) (this.getY() * other.getX())
+	 * 		| result == (long)this.getX() * other.getY() - (long)this.getY() * other.getX()
 	 */
 	// There will never be overflow when converting to long (Integer.MAX_VALUE * Integer.MAX_VALUE * 2 < Long.MAX_VALUE)
 	public long crossProduct(IntVector other) {
-		return (long) (x * other.getY()) - (long) (y * other.getX());
+		return (long)x * other.getY() - (long)y * other.getX();
 	}
 
 	/**

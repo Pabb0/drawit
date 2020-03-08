@@ -1,12 +1,12 @@
 package drawit;
 
 public class DoublePoint {
-	private double x;
-	private double y;
+	private final double x;
+	private final double y;
 
-	public DoublePoint(double xGiven, double yGiven) {
-		x = xGiven;
-		y = yGiven;
+	public DoublePoint(double x, double y) {
+		this.x = x;
+		this.y = y;
 	}
 
 	public double getX() {
