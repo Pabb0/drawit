@@ -12,6 +12,7 @@ import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.PointArrays;
 import drawit.RoundedPolygon;
+import drawit.shapegroups1.Extent;
 
 
 class TestFile {
@@ -269,6 +270,86 @@ class TestFile {
 	    // Op papier tekenen of dit klopt.
 	    System.out.println(polygon1.getDrawingCommands());	    
 	    System.out.println(polygon2.getDrawingCommands());
+	    
+	    
+	    
+	    //
+	    // shapegroups1.Extent tests
+	    //
+	    
+	    Extent ext11 = Extent.ofLeftTopRightBottom(10, 20, 30, 50);
+	    assert ext11.getLeft() == 10;
+	    assert ext11.getTop() == 20;
+	    assert ext11.getRight() == 30;
+	    assert ext11.getBottom() == 50;
+	    assert ext11.getWidth() == 20;
+	    assert ext11.getHeight() == 30;
+	    IntPoint ext11TopLeft = ext11.getTopLeft();
+	    assert ext11TopLeft.equals(new IntPoint(10, 20));
+	    IntPoint ext11BottomRight = ext11.getBottomRight();
+	    assert ext11BottomRight.equals(new IntPoint(30, 50));
+	    assert ext11.contains(new IntPoint(20, 30));
+	    assert !(ext11.contains(new IntPoint(10, 10)));
+	    assert ext11.contains(new IntPoint(10, 30));
+	    assert ext11.contains(ext11TopLeft);
+	    assert ext11.contains(ext11BottomRight);
+
+	    Extent ext11WithRight = ext11.withRight(100);
+	    assert ext11WithRight.getLeft() == 10;
+	    assert ext11WithRight.getTop() == 20;
+	    assert ext11WithRight.getRight() == 100;
+	    assert ext11WithRight.getBottom() == 50;
+	    assert ext11WithRight.getWidth() == 90;
+	    assert ext11WithRight.getHeight() == 30;
+	    
+	    Extent ext11WithLeft = ext11.withLeft(100);
+	    assert ext11WithLeft.getLeft() == 100;
+	    assert ext11WithLeft.getTop() == 20;
+	    assert ext11WithLeft.getRight() == 30;
+	    assert ext11WithLeft.getBottom() == 50;
+	    //assert ext11WithLeft.getWidth() == -70; HOE OPLOSSEN? LEFT EN RIGHT SWAPPEN, OF WIDTH STEEDS POSITIEF?
+	    assert ext11WithLeft.getHeight() == 30;
+	    
+	    Extent ext12 = Extent.ofLeftTopWidthHeight(10, 20, 20, 30);
+	    assert ext12.getLeft() == 10;
+	    assert ext12.getTop() == 20;
+	    assert ext12.getRight() == 30;
+	    assert ext12.getBottom() == 50;
+	    assert ext12.getWidth() == 20;
+	    assert ext12.getHeight() == 30;
+	    IntPoint ext12TopLeft = ext12.getTopLeft();
+	    assert ext12TopLeft.equals(new IntPoint(10, 20));
+	    IntPoint ext12BottomRight = ext12.getBottomRight();
+	    assert ext12BottomRight.equals(new IntPoint(30, 50));
+	    assert ext12.contains(new IntPoint(20, 30));
+	    assert !(ext12.contains(new IntPoint(10, 10)));
+	    assert ext12.contains(new IntPoint(10, 30));
+	    assert ext12.contains(ext12TopLeft);
+	    assert ext12.contains(ext12BottomRight);
+
+	    Extent ext12WithRight = ext12.withRight(100);
+	    assert ext12WithRight.getLeft() == 10;
+	    assert ext12WithRight.getTop() == 20;
+	    assert ext12WithRight.getRight() == 100;
+	    assert ext12WithRight.getBottom() == 50;
+	    assert ext12WithRight.getWidth() == 90;
+	    assert ext12WithRight.getHeight() == 30;
+	    
+	    Extent ext12WithLeft = ext12.withLeft(100);
+	    assert ext12WithLeft.getLeft() == 100;
+	    assert ext12WithLeft.getTop() == 20;
+	    assert ext12WithLeft.getRight() == 30;
+	    assert ext12WithLeft.getBottom() == 50;
+	    //assert ext12WithLeft.getWidth() == -70; HOE OPLOSSEN? LEFT EN RIGHT SWAPPEN, OF WIDTH STEEDS POSITIEF?
+	    assert ext12WithLeft.getHeight() == 30;
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
 	    
 	}
 }

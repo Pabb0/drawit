@@ -1,5 +1,6 @@
 package drawit;
 
+import java.awt.Color;
 import java.util.Arrays;
 
 /**
@@ -24,6 +25,7 @@ public class RoundedPolygon {
 	 */
 	private int radius;
 	private IntPoint[] vertices;
+	private java.awt.Color color;
 	
 	/**
 	 * @mutates | this
@@ -34,6 +36,7 @@ public class RoundedPolygon {
 	public RoundedPolygon() {
 		radius = 0;
 		vertices = new IntPoint[0];
+		color = Color.YELLOW;
 		}
 
 	public IntPoint[] getVertices() {
@@ -42,6 +45,10 @@ public class RoundedPolygon {
 	
 	public int getRadius() {
 		return radius;
+	}
+	
+	public java.awt.Color getColor() {
+		return color;
 	}
 	
 	/**
@@ -79,6 +86,10 @@ public class RoundedPolygon {
 			throw new IllegalArgumentException("The given radius is less than 0.");
 		}
 		radius = newRadius;
+	}
+	
+	public void	setColor(java.awt.Color color) {
+		this.color = color;
 	}
 	
 	/**
@@ -270,6 +281,11 @@ public class RoundedPolygon {
 			}
 			
 		}
+		
+		result += "fill " + String.valueOf(this.getColor().getRed()) + " "
+				+  String.valueOf(this.getColor().getGreen()) + " "
+				+  String.valueOf(this.getColor().getBlue()) + " ";
+		
 		return result;	
 	}
 }
