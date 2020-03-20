@@ -1,10 +1,17 @@
-package drawit;
+package drawit.tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
+
+import drawit.DoublePoint;
+import drawit.DoubleVector;
+import drawit.IntPoint;
+import drawit.IntVector;
+import drawit.PointArrays;
+import drawit.RoundedPolygon;
 
 
 class TestFile {
@@ -210,6 +217,7 @@ class TestFile {
 		assert message2.equals( "The given array of points does not define a proper polygon "
 				+ "because at least two vertices coincide. "
 				+ "(vertex 0 and vertex 1 from the array).");
+		System.out.println(message3);
 		assert message3.equals("The given array of points does not define a proper polygon "
 				+ "because at least one vertex is on any edge. "
 				+ "(vertex 2 is on the line between vertex 4 and vertex 0 ).");
