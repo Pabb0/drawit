@@ -1,6 +1,7 @@
 package drawit;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 /**
  * Declares a number of methods useful for working with arrays of {@code IntPoint} objects.
@@ -8,6 +9,14 @@ import java.util.Arrays;
 public class PointArrays {
 	
 	private PointArrays() {}
+	
+	public static boolean equals(IntPoint[] ps1, IntPoint[] ps2) {
+		return
+				ps1 == ps2 ||
+				ps1 != null && ps2 != null &&
+				ps1.length == ps2.length &&
+				IntStream.range(0, ps1.length).allMatch(i -> IntPoint.equals(ps1[i], ps2[i]));
+	}
 	
 	/**
 	 * Returns a new array with the same contents as the given array.
@@ -127,6 +136,8 @@ public class PointArrays {
 		return newArray;
 	}
 	
+	
+	
 	/**
 	 * Returns {@code null} if the given array of points defines a proper polygon; otherwise, returns a string describing why it does not.
 	 * 
@@ -145,13 +156,16 @@ public class PointArrays {
 		if (points.length <= 2) {
 			return "The given array of points does not define a proper polygon because the array contains two or less points. (The given array contains " + String.valueOf(points.length) + " points).";
 		}
-		for(int i = 0; i < points.length; i++) {
-			for(int j = 0; j < points.length; j++) {
-				if (i != j && points[i].equals(points[j])) {
+		for(int i = 0; i < points.length - 1; i++) {
+			for(int j = i + 1; j < points.length; j++) {
+				if (points[i].equals(points[j])) {
 					return "The given array of points does not define a proper polygon because at least two vertices coincide. (vertex " + String.valueOf(i) + " and vertex " + String.valueOf(j) + " from the array).";
 				}
-				if (points[j].isOnLineSegment(points[i], points[(i + 1) % points.length])) {
-					return "The given array of points does not define a proper polygon because at least one vertex is on any edge. (vertex " + String.valueOf(j) + " is on the line between vertex " + String.valueOf(i) + " and vertex " + String.valueOf((i+1) % points.length) + " ).";
+				if (points[j].isOnLineSegment(points[i], points[(i + 1)])) {
+					return "The given array of points does not define a proper polygon because at least one vertex is on any edge. (vertex " + String.valueOf(j) + " is on the line between vertex " + String.valueOf(i) + " and vertex " + String.valueOf((i+1)) + " ).";
+				}
+				if (points[i].isOnLineSegment(points[j], points[(j + 1) % points.length])) {
+					return "The given array of points does not define a proper polygon because at least one vertex is on any edge. (vertex " + String.valueOf(i) + " is on the line between vertex " + String.valueOf(j) + " and vertex " + String.valueOf((j+1) % points.length) + " ).";
 				}
 				if (i != j && IntPoint.lineSegmentsIntersect(points[i], points[(i + 1) % points.length], points[j], points[(j + 1) % points.length])) {
 					return "The given array of points does not define a proper polygon because at least two edges intersect. (The line between vertex " + String.valueOf(i) + " and vertex " + String.valueOf((i+1) % points.length) + " intersects with the line between vertex" + String.valueOf(j) + " and vertex " + String.valueOf((j+1) % points.length) + ").";

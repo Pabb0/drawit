@@ -34,9 +34,6 @@ public class IntPoint {
 	/**
 	 * Returns whether this point and the given point are equal.
 	 * 
-	 * @inspects | this
-	 * @inspects | other
-	 * 
 	 * @pre Argument {@code other} is not {@code null}.
 	 * 		| other != null
 	 * @post The result is true if the x-value of this point and the given point are equal and the y-value of this point and the given point are equal.
@@ -46,6 +43,12 @@ public class IntPoint {
 		return (x == other.getX() && y == other.getY());
 	}
 	
+	public static boolean equals(IntPoint p1, IntPoint p2) {
+		return
+				p1 == p2 ||
+				p1 != null && p2 != null &&
+				p1.equals(p2);
+	}
 	/**
 	 * Returns a new {@code IntPoint} object which is the addition of this {@code IntPoint} with the given {@code IntVector}.
 	 *

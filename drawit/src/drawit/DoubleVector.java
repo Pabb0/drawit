@@ -44,4 +44,11 @@ public class DoubleVector {
 		return Math.atan2(y, x);
 	}
 	
+	public IntVector round() {
+		int xRounded = (int) Math.round(x);
+		int yRounded = (int) Math.round(y);
+
+		return new IntVector(xRounded, yRounded);
+	}
+	
 }

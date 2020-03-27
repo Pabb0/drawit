@@ -12,6 +12,8 @@ import java.util.Arrays;
  * 		| this.getVertices() != null
  * @invar 
  * 		| Arrays.stream(this.getVertices()).allMatch(e -> e != null)
+ * @invar
+ * 		| PointArrays.checkDefinesProperPolygon(getVertices()) == null
  */
 public class RoundedPolygon {
 	/**
@@ -21,6 +23,8 @@ public class RoundedPolygon {
 	 * 		| vertices != null
 	 * @invar 
 	 * 		| Arrays.stream(vertices).allMatch(e -> e != null)
+	 * @invar
+	 * 		| PointArrays.checkDefinesProperPolygon(vertices) == null
 	 * @representationObject
 	 */
 	private int radius;
@@ -32,13 +36,17 @@ public class RoundedPolygon {
 	 * 
      * @post This object's list of vertices is empty.
      *		| getVertices().length == 0
+     * @post 
+     * 		| getRadius() == 0
 	 */
 	public RoundedPolygon() {
 		radius = 0;
 		vertices = new IntPoint[0];
 		color = Color.YELLOW;
 		}
-
+	/**
+	 * @creates result
+	 */
 	public IntPoint[] getVertices() {
 		return PointArrays.copy(vertices);
 	}
@@ -56,6 +64,8 @@ public class RoundedPolygon {
 	 * 
 	 * @throws IllegalArgumentException if {@code newVertices} is {@code null}.
 	 * 		| newVertices == null
+	 * @throws IllegalArgumentException
+	 *    | Arrays.stream(newVertices).anyMatch(v -> v == null)
 	 * @throws IllegalArgumentException if the given array of vertices leads to a non-proper polygon.
 	 * 		| PointArrays.checkDefinesProperPolygon(newVertices) != null
 	 * 
@@ -65,6 +75,9 @@ public class RoundedPolygon {
 	public void setVertices(IntPoint[] newVertices) {
 		if (newVertices == null) {
 			throw new IllegalArgumentException("The given array of vertices is null.");
+		}
+		if (Arrays.stream(newVertices).anyMatch(v -> v == null)) {
+			throw new IllegalArgumentException("An element of newVertices is null");
 		}
 		if (PointArrays.checkDefinesProperPolygon(newVertices) != null) {
 			throw new IllegalArgumentException("The given array of vertices leads to a non-proper polygon.");
@@ -78,6 +91,7 @@ public class RoundedPolygon {
 	 * @throws IllegalArgumentException if the given radius is less than 0.
 	 * 		| newRadius < 0
 	 * 
+	 * @post | PointArrays.equals(getVertices(), old(getVertices()))
 	 * @post  This object's radius equals the given radius.
 	 * 		| this.getRadius() == newRadius
 	 */
@@ -100,9 +114,9 @@ public class RoundedPolygon {
 	 * @throws IllegalArgumentException if {@code point} is {@code null}.
 	 * 		| point == null
 	 * @throws IllegalArgumentException if inserting the given point at the given index leads to a non-proper polygon
-	 * 		| PointArrays.checkDefinesProperPolygon(PointArrays.insert(vertices, index, point)) != null
+	 * 		| PointArrays.checkDefinesProperPolygon(PointArrays.insert(getVertices(), index, point)) != null
 	 * @throws IllegalArgumentException if the given index is not between 0 (inclusive) and the length of this array's length (inclusive).
-	 * 		| 0 <= index && index <= points.length
+	 * 		| 0 <= index && index <= getVertices().length
 	 * 
 	 * @post This object's array of {@code IntPoint} objects equals the old array of {@code IntPoint} objects with the given point inserted at the given index.	 
 	 *     	| this.getVertices().length == old(this.getVertices().length) + 1 &&
@@ -131,9 +145,9 @@ public class RoundedPolygon {
 	 * @mutates | this
 	 * 
 	 * @throws IllegalArgumentException if removing the point at the given index leads to a non-proper polygon.
-	 * 		| PointArrays.checkDefinesProperPolygon(PointArrays.remove(vertices, index)) != null
+	 * 		| PointArrays.checkDefinesProperPolygon(PointArrays.remove(getVertices(), index)) != null
 	 * @throws IllegalArgumentException if the given index is not between 0 (inclusive) and the length of this array's length (exclusive).
-	 * 		| 0 <= index && index < points.length
+	 * 		| 0 <= index && index < getVertices().length
 	 * 
 	 * @post This object's array of {@code IntPoint} objects equals the old array of {@code IntPoint} objects with the point at the given index removed.	 
 	 *		| this.getVertices().length == old(this.getVertices().length) - 1 &&
@@ -160,9 +174,9 @@ public class RoundedPolygon {
 	 * @throws IllegalArgumentException if {@code point} is {@code null}.
 	 * 		| point == null
 	 * @throws IllegalArgumentException if replacing the point at the given index by the given point leads to a non-proper polygon.
-	 * 		| PointArrays.checkDefinesProperPolygon(PointArrays.update(vertices, index, point)) != null
+	 * 		| PointArrays.checkDefinesProperPolygon(PointArrays.update(getVertices(), index, point)) != null
 	 * @throws IllegalArgumentException if the given index is not between 0 (inclusive) and the length of this array's length (exclusive).
-	 * 		| 0 <= index && index < points.length
+	 * 		| 0 <= index && index < getVertices().length
 	 *  
 	 * @post This object's array of {@code IntPoint} objects equals the old array of {@code IntPoint} objects with the given point taking the place of the point at the given index.	 
 	 *		| this.getVertices().length == old(this.getVertices().length) &&
@@ -188,104 +202,108 @@ public class RoundedPolygon {
 	
 	// No documentation required
 	public boolean contains(IntPoint point) {
-		boolean result = false;
-
-		for (int i = 0; i < vertices.length; i++) {
-			IntPoint firstPoint = vertices[i];
-			IntPoint nextPoint = vertices[(i + 1) % vertices.length];
-			IntPoint pointOnRight = new IntPoint(Math.max(firstPoint.getX(), nextPoint.getX()) + 1, point.getY());
-
-
-			if (point.equals(firstPoint)  || point.isOnLineSegment(firstPoint, nextPoint)) {
-				return true;
+		// We call the half-line extending from `point` to the right the "exit path"
+		// Find first vertex that is not on the exit path
+		int firstVertex;
+		{
+			int i = 0;
+			for (;;) {
+				if (i == vertices.length) // Zero or one vertices
+					return false;
+				if (vertices[i].equals(point))
+					return true;
+				if (!(vertices[i].getY() == point.getY() && vertices[i].getX() > point.getX()))
+					break;
+				i++;
 			}
-			if ((point.getY() == firstPoint.getY() && point.getX() < firstPoint.getX()) || IntPoint.lineSegmentsIntersect(firstPoint, nextPoint, point, pointOnRight)) {
-				result = !result;
-			}
+			firstVertex = i;
 		}
-		return result;
-
+		IntVector exitVector = new IntVector(1, 0);
+		// Count how many times the exit path crosses the polygon
+		int nbEdgeCrossings = 0;
+		for (int index = firstVertex; ; ) {
+			IntPoint a = vertices[index];
+			// Find the next vertex that is not on the exit path
+			boolean onExitPath = false;
+			int nextIndex = index;
+			IntPoint b;
+			for (;;) {
+				int nextNextIndex = (nextIndex + 1) % vertices.length;
+				if (point.isOnLineSegment(vertices[nextIndex], vertices[nextNextIndex]))
+					return true;
+				nextIndex = nextNextIndex;
+				b = vertices[nextIndex];
+				if (b.equals(point))
+					return true;
+				if (b.getY() == point.getY() && b.getX() > point.getX()) {
+					onExitPath = true;
+					continue;
+				}
+				break;
+			}
+			if (onExitPath) {
+				if ((b.getY() < point.getY()) != (a.getY() < point.getY()))
+					nbEdgeCrossings++;
+			} else {
+				// Does `ab` straddle the exit path's carrier?
+				if (Math.signum(a.getY() - point.getY()) * Math.signum(b.getY() - point.getY()) < 0) {
+					// Does the exit path straddle `ab`'s carrier?
+					IntVector ab = b.minus(a);
+					if (Math.signum(point.minus(a).crossProduct(ab)) * Math.signum(exitVector.crossProduct(ab)) < 0)
+						nbEdgeCrossings++;
+				}
+			}
+			if (nextIndex == firstVertex)
+				break;
+			index = nextIndex;
+		}
+		return nbEdgeCrossings % 2 == 1;
 	}
 	
 	// No documentation required
 	public String getDrawingCommands() {
-		String result = "";
-		
-		if (vertices.length < 3) {
-			return result;
-		}
-		
-		for(int i = 0; i < vertices.length; i++) {
-			IntPoint A = vertices[((i-1) + vertices.length) % vertices.length];
-			IntPoint B = vertices[i];
-			IntPoint C = vertices[(i+1) % vertices.length];
+		if (vertices.length < 3)
+			return "";
+		StringBuilder commands = new StringBuilder();
+		for (int index = 0; index < vertices.length; index++) {
 			
-			IntVector BA = A.minus(B);
-			IntVector BC = C.minus(B);
-			
-			DoublePoint BAC = B.asDoublePoint().plus(BA.asDoubleVector().scale(0.5));
-			DoublePoint BCC = B.asDoublePoint().plus(BC.asDoubleVector().scale(0.5));
-			
-			if (BA.isCollinearWith(BC)){
-				result += "line " + String.valueOf((int) Math.round((BAC.getX()))) + " "
-				+ String.valueOf((int) Math.round((BAC.getY()))) + " "
-				+ String.valueOf((int) Math.round((BCC.getX()))) + " " 
-				+ String.valueOf((int) Math.round((BCC.getY()))) + "\n";		
+			IntPoint a = vertices[(index + vertices.length - 1) % vertices.length];
+			IntPoint b = vertices[index];
+			IntPoint c = vertices[(index + 1) % vertices.length];
+			DoubleVector ba = a.minus(b).asDoubleVector();
+			DoubleVector bc = c.minus(b).asDoubleVector();
+			DoublePoint baCenter = b.asDoublePoint().plus(ba.scale(0.5));
+			DoublePoint bcCenter = b.asDoublePoint().plus(bc.scale(0.5));
+			double baSize = ba.getSize();
+			double bcSize = bc.getSize();
+			if (ba.crossProduct(bc) == 0) {
+				commands.append("line " + bcCenter.getX() + " " + bcCenter.getY() + " " + b.getX() + " " + b.getY() + "\n");
+				commands.append("line " + b.getX() + " " + b.getY() + " " + baCenter.getX() + " " + baCenter.getY() + "\n");
 			} else {
-				DoubleVector BAU = BA.asDoubleVector();
-				BAU = BAU.scale(1 / BAU.getSize());
-				DoubleVector BCU = BC.asDoubleVector();
-				BCU = BCU.scale(1 / BCU.getSize());
-				DoubleVector BSU = BAU.plus(BCU);
-				BSU = BSU.scale(1 / BSU.getSize());
-				
-				double BAUcutoff = BAU.dotProduct(BSU);
-				double unitRadius = Math.abs(BAU.crossProduct(BSU));
-				
-				double appliedScaleFactor = Math.min(this.getRadius() / unitRadius, (0.5 * Math.min(BA.asDoubleVector().getSize(),  BC.asDoubleVector().getSize()) / BAUcutoff));
-				
-				double actualRadius = unitRadius * appliedScaleFactor;
-				DoublePoint actualCorner = B.asDoublePoint().plus(BSU.scale(appliedScaleFactor));
-				
-				DoublePoint arcStart = B.asDoublePoint().plus(BAU.scale(BAUcutoff * appliedScaleFactor));
-				DoublePoint arcEnd = B.asDoublePoint().plus(BCU.scale(BAUcutoff * appliedScaleFactor));
-
-				DoubleVector centerToStart = arcStart.minus(actualCorner);
-				double startAngle = centerToStart.asAngle();
-				
-				DoubleVector centerToEnd = arcEnd.minus(actualCorner);
-				double endAngle = centerToEnd.asAngle();
-				
-				double angleExtent = endAngle - startAngle;
-				if (angleExtent < -Math.PI) {
+				DoubleVector baUnit = ba.scale(1/baSize);
+				DoubleVector bcUnit = bc.scale(1/bcSize);
+				DoubleVector bisector = baUnit.plus(bcUnit);
+				bisector = bisector.scale(1/bisector.getSize());
+				double unitEdgeDistance = baUnit.dotProduct(bisector);
+				double unitRadius = Math.abs(bisector.crossProduct(baUnit));
+				double scaleFactor = Math.min(this.radius / unitRadius, Math.min(baSize, bcSize) / 2 / unitEdgeDistance);
+				DoublePoint center = b.asDoublePoint().plus(bisector.scale(scaleFactor));
+				double radius = unitRadius * scaleFactor;
+				DoublePoint bcCornerStart = b.asDoublePoint().plus(bcUnit.scale(unitEdgeDistance * scaleFactor));
+				DoublePoint baCornerStart = b.asDoublePoint().plus(baUnit.scale(unitEdgeDistance * scaleFactor));
+				double baAngle = baCornerStart.minus(center).asAngle();
+				double bcAngle = bcCornerStart.minus(center).asAngle();
+				double angleExtent = bcAngle - baAngle;
+				if (angleExtent < -Math.PI)
 					angleExtent += 2 * Math.PI;
-				} else if (angleExtent > Math.PI) {
+				else if (Math.PI < angleExtent)
 					angleExtent -= 2 * Math.PI;
-				}
-				
-				result += "line " + String.valueOf((int) Math.round(BAC.getX())) + " "
-				+ String.valueOf((int) Math.round(BAC.getY())) + " "
-				+ String.valueOf((int) Math.round(arcStart.getX())) + " " 
-				+ String.valueOf((int) Math.round(arcStart.getY())) + "\n";
-				
-				result += "arc " + String.valueOf((int) Math.round(actualCorner.getX())) + " "
-				+ String.valueOf((int) Math.round(actualCorner.getY())) + " "
-				+ String.valueOf((int) Math.round(actualRadius)) + " "
-				+ String.valueOf(startAngle) + " "
-				+ String.valueOf(angleExtent) + "\n";
-				
-				result += "line " + String.valueOf((int) Math.round(arcEnd.getX())) + " "
-				+ String.valueOf((int) Math.round(arcEnd.getY())) + " "
-				+ String.valueOf((int) Math.round(BCC.getX())) + " " 
-				+ String.valueOf((int) Math.round(BCC.getY())) + "\n";		
+				commands.append("line " + baCenter.getX() + " " + baCenter.getY() + " " + baCornerStart.getX() + " " + baCornerStart.getY() + "\n");
+				commands.append("arc " + center.getX() + " " + center.getY() + " " + radius + " " + baAngle + " " + angleExtent + "\n");
+				commands.append("line " + bcCornerStart.getX() + " " + bcCornerStart.getY() + " " + bcCenter.getX() + " " + bcCenter.getY() + "\n");
 			}
-			
 		}
-		
-		result += "fill " + String.valueOf(this.getColor().getRed()) + " "
-				+  String.valueOf(this.getColor().getGreen()) + " "
-				+  String.valueOf(this.getColor().getBlue()) + " ";
-		
-		return result;	
+		commands.append("fill " + String.valueOf(this.getColor().getRed()) + " " +  String.valueOf(this.getColor().getGreen()) + " " +  String.valueOf(this.getColor().getBlue()) + "\n");
+		return commands.toString();
 	}
 }
