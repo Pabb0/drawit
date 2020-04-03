@@ -243,7 +243,7 @@ public class ShapeGroup {
 		if (innerCoordinates == null) {
 			throw new IllegalArgumentException("The given coordinates is null.");
 		}
-		for(ShapeGroup subGroup = this; subGroup != null; subGroup = subGroup.nextSibling) {
+		for(ShapeGroup subGroup = this.firstChild; subGroup != null; subGroup = subGroup.nextSibling) {
 			if (subGroup.getExtent().contains(innerCoordinates)) {
 				return subGroup;
 			}

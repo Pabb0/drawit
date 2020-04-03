@@ -320,8 +320,8 @@ public class ShapeGroup {
 		for (int i = ancestors.size() - 1; i >= 0; i--) {
 			ShapeGroup ancestor = ancestors.get(i);
 			
-			int newX = (int) Math.round(ancestor.scaling[2] * vector.getX() + ancestor.translation[2]);
-			int newY = (int) Math.round(ancestor.scaling[3] * vector.getY() + ancestor.translation[3]);
+			int newX = (int) Math.round(ancestor.scaling[2] * vector.getX());
+			int newY = (int) Math.round(ancestor.scaling[3] * vector.getY());
 			vector = new IntVector(newX, newY);
 			
 		}
@@ -344,8 +344,8 @@ public class ShapeGroup {
 		IntPoint point = innerCoordinates;
 		
 		for(ShapeGroup shapeGroup = this; shapeGroup != null; shapeGroup = shapeGroup.parent) {
-			int newX = (int) Math.round(shapeGroup.scaling[0] * point.getX());
-			int newY = (int) Math.round(shapeGroup.scaling[1] * point.getY());
+			int newX = (int) Math.round(shapeGroup.scaling[0] * point.getX() + shapeGroup.translation[0]);
+			int newY = (int) Math.round(shapeGroup.scaling[1] * point.getY() + shapeGroup.translation[1]);
 			point = new IntPoint(newX, newY);
 			
 		}
