@@ -262,13 +262,13 @@ public class ShapeGroup {
 	
 	// Defines the transformation between the inner and outer extent of this ShapeGroup
 	private void transformation(Extent inner, Extent outer) {
-		// OUTER TO INNER DEFINED TRANSFORMATION
+		// INNER TO OUTER
 		this.scaling[0] = (double) outer.getWidth() / inner.getWidth();
 		this.scaling[1] = (double) outer.getHeight() / inner.getHeight();
 		this.translation[0] = outer.getLeft() - this.scaling[0] * inner.getLeft();
 		this.translation[1] = outer.getTop() - this.scaling[1] * inner.getTop();
 		
-		// INNER TO OUTER DEFINED TRANSFORMATION
+		// OUTER TO INNER
 		this.scaling[2] = (double) inner.getWidth() / outer.getWidth();
 		this.scaling[3] = (double) inner.getHeight() / outer.getHeight();
 		this.translation[2] = inner.getLeft() - this.scaling[2] * outer.getLeft();
