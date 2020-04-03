@@ -263,7 +263,7 @@ public class Extent {
 		if (!(newHeight > 0)) {
 			throw new IllegalArgumentException("The given height is not larger than 0.");
 		}
-		return new Extent(left, top, right, bottom + newHeight);
+		return new Extent(left, top, right, top + newHeight);
 	}
 	
 }

@@ -344,8 +344,8 @@ public class ShapeGroup {
 		IntPoint point = innerCoordinates;
 		
 		for(ShapeGroup shapeGroup = this; shapeGroup != null; shapeGroup = shapeGroup.parent) {
-			int newX = (int) Math.round(shapeGroup.scaling[0] * point.getX() + shapeGroup.translation[0]);
-			int newY = (int) Math.round(shapeGroup.scaling[1] * point.getY() + shapeGroup.translation[1]);
+			int newX = (int) Math.round(shapeGroup.scaling[0] * point.getX());
+			int newY = (int) Math.round(shapeGroup.scaling[1] * point.getY());
 			point = new IntPoint(newX, newY);
 			
 		}

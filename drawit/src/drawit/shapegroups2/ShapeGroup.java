@@ -361,8 +361,8 @@ public class ShapeGroup {
 		for (int i = ancestors.size() - 1; i >= 0; i--) {
 			ShapeGroup ancestor = ancestors.get(i);
 			
-			int newX = (int) Math.round(ancestor.scaling[2] * vector.getX() + ancestor.translation[2]);
-			int newY = (int) Math.round(ancestor.scaling[3] * vector.getY() + ancestor.translation[3]);
+			int newX = (int) Math.round(ancestor.scaling[2] * vector.getX());
+			int newY = (int) Math.round(ancestor.scaling[3] * vector.getY());
 			vector = new IntVector(newX, newY);
 		}
 		return vector;
