@@ -1,13 +1,14 @@
-package drawit.shapegroups1;
+package drawit.shapegroups2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import drawit.shapegroups1.Extent;
+import drawit.shapegroups2.Extent;
 import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.RoundedPolygon;
+
 
 /**
 * @invar This ShapeGroup its children have this ShapeGroup as their parent and this ShapeGroup has no shape
@@ -18,29 +19,37 @@ import drawit.RoundedPolygon;
 * 		| getParentGroup() == null || getParentGroup().getSubgroups().contains(this)
 * @invar 	
 * 		| getExtent() != null && getOriginalExtent() != null
-*
 */
 public class ShapeGroup {
 	
 	/**
-	 * @invar This ShapeGroup its children have this ShapeGroup as their parent and this ShapeGroup has no shape
-	 * 		  or this ShapeGroup has no children but does have a shape.
-	 * 		| subGroups == null && shape != null ||
-	 * 		| subGroups.stream().allMatch(child -> child.parent == this) && shape == null 
-	 * @invar This shapeGroup is the root ShapeGroup (i.e. it has no parent) or else it is among its parent's children.
-	 * 		| parent == null || parent.subGroups.contains(this)
-	 * @invar	| getAncestors().contains(this)
-	 * @representationObject
-	 * @peerObjects
-	 */
-	private ArrayList<ShapeGroup> subGroups;
-	
-	/**
 	 * @peerObject
+     * @invar This ShapeGroup has children whose parent is this ShapeGroup and this ShapeGroup has no shape
+	 * 		  or this ShapeGroup has no children but does have a shape.
+	 * 		| firstChild == null && shape != null ||
+	 * 		| (firstChild != null && shape == null)
+	 * 
+	 * @invar	| nextSibling == null || nextSibling.previousSibling == this
+	 * @invar	| previousSibling == null || previousSibling.nextSibling == this
+	 * @invar 	| getSiblingsPrivate().stream().allMatch(sibling -> sibling.parent == this.parent)
+	 * @invar This shapeGroup is the root ShapeGroup (i.e. it has no parent) or else it is among its parent's children.
+	 * 		| parent == null || parent.getSiblingsPrivate().contains(this)
+	 * @invar	| getAncestors().contains(this)
 	 */
 	private ShapeGroup parent;
 	
-	private final RoundedPolygon shape;
+	/**
+	 * @peerObjects
+	 * @invar 	| (firstChild == null && lastChild == null) || (firstChild != null && lastChild != null)
+	 */
+	private ShapeGroup firstChild;
+	private ShapeGroup lastChild;
+	private ShapeGroup previousSibling;
+	private ShapeGroup nextSibling;
+	
+	
+	private RoundedPolygon shape;
+	
 	/**
 	 * @invar 	| extent != null
 	 * @invar	| originalExtent != null
@@ -50,15 +59,18 @@ public class ShapeGroup {
 	
 	/**
 	 * @invar 	| translation != null
-	 * @invar 	| scaling != null && (int) Math.round(scaling[0] * scaling[2]) == 1 && (int) Math.round(scaling[1] * scaling[3]) == 1	
+	 * @invar 	| scaling != null && (int) Math.round(scaling[0] * scaling[2]) == 1 && (int) Math.round(scaling[1] * scaling[3]) == 1		
 	 */
 	private double[] translation;
 	private double[] scaling; 
 	
 	
 	public ShapeGroup(RoundedPolygon shape) {
-		this.subGroups = new ArrayList<ShapeGroup>();
 		this.parent = null;
+		this.firstChild = null;
+		this.lastChild = null;
+		this.previousSibling = null;
+		this.nextSibling = null;
 		this.shape = shape;
 		
 		IntPoint[] points = shape.getVertices();
@@ -66,7 +78,8 @@ public class ShapeGroup {
 		int smallestY = points[0].getY();
 		int largestX = points[0].getX();
 		int largestY = points[0].getY();
-
+		
+		// Finding extent of shape
 		for (int i = 1; i < points.length; i++) {
 			if (points[i].getX() < smallestX) {
 				smallestX = points[i].getX();
@@ -79,6 +92,7 @@ public class ShapeGroup {
 				largestY = points[i].getY();
 			}
 		}
+		
 		this.extent = Extent.ofLeftTopRightBottom(smallestX, smallestY, largestX, largestY);
 		this.originalExtent = Extent.ofLeftTopRightBottom(smallestX, smallestY, largestX, largestY);
 		
@@ -101,21 +115,30 @@ public class ShapeGroup {
 			throw new IllegalArgumentException("One or more ShapeGroups in the given array are null.");
 		}
 		this.shape = null;
-		subGroups = new ArrayList<ShapeGroup>();
 		
-		// Initialize first subgroup
-		subGroups.add(subgroups[0]);
+		// Initializing first child
+		this.firstChild = subgroups[0];
 		subgroups[0].parent = this;
-		
+		subgroups[0].previousSibling = null;
+		if (subgroups.length > 1) {
+			subgroups[0].nextSibling = subgroups[1];
+		}
+		this.lastChild = subgroups[subgroups.length - 1];
+
 		int smallestX = subgroups[0].getExtent().getLeft();
 		int largestX = subgroups[0].getExtent().getRight();
 		int smallestY = subgroups[0].getExtent().getTop();
 		int largestY = subgroups[0].getExtent().getBottom();
-
+		
 		for (int index = 1; index < subgroups.length; index++) {
-			this.subGroups.add(subgroups[index]);
-			subgroups[index].parent = this;
-
+			
+			subgroups[index].parent = this;			
+			subgroups[index].previousSibling = subgroups[index - 1];			
+			if (index != subgroups.length - 1) {
+				subgroups[index].nextSibling = subgroups[index + 1];
+			} 
+			
+			// Finding the total extent
 			if (subgroups[index].getExtent().getLeft() < smallestX) {
 				smallestX = subgroups[index].getExtent().getLeft();
 			}
@@ -133,9 +156,11 @@ public class ShapeGroup {
 		this.extent =  Extent.ofLeftTopRightBottom(smallestX, smallestY, largestX, largestY);
 		this.originalExtent =  Extent.ofLeftTopRightBottom(smallestX, smallestY, largestX, largestY);
 		
+		// Identity transformation
 		this.translation = new double[] {0, 0, 0, 0};
 		this.scaling = new double[] {1, 1, 1, 1};
 	}
+	
 	/**
 	 * Returns this ShapeGroupe its extent (outer coordinate system).
 	 * @basic
@@ -163,9 +188,13 @@ public class ShapeGroup {
 	 * @peerObjects
 	 */
 	public java.util.List<ShapeGroup> getSubgroups() {
-		if (subGroups.size() != 0) {
-			return List.copyOf(subGroups);
-		} else {
+		if (this.firstChild != null) { // Non-leaf
+			ArrayList<ShapeGroup> subGroups = new ArrayList<ShapeGroup>();
+			for (ShapeGroup child = this.firstChild; child != null; child = child.nextSibling) {
+				subGroups.add(child);
+			}
+			return subGroups;
+		} else { // Leaf
 			return null;
 		}
 	}
@@ -185,12 +214,19 @@ public class ShapeGroup {
 		if (index < 0 || index >= this.getSubgroupCount()) {
 			throw new IllegalArgumentException ("The given index is out of range.");
 		}
-		return subGroups.get(index);}
+		return this.getSubgroups().get(index);
+	}
 	
 	/**
 	 * Returns the number of ShapeGroups that this ShapeGroup has in its subgroup.
 	 */
-	public int getSubgroupCount() {return subGroups.size();}
+	public int getSubgroupCount() {
+		if (this.firstChild == null) { // Leaf
+			return 0;
+		} else { // Non-leaf
+			return this.getSubgroups().size();
+		}
+	}
 	
 	/**
 	 * Returns the first ShapeGroup of this ShapeGroup its subgroups whose extent contains the given coordinates. 
@@ -207,7 +243,7 @@ public class ShapeGroup {
 		if (innerCoordinates == null) {
 			throw new IllegalArgumentException("The given coordinates is null.");
 		}
-		for (ShapeGroup subGroup : subGroups) {
+		for(ShapeGroup subGroup = this; subGroup != null; subGroup = subGroup.nextSibling) {
 			if (subGroup.getExtent().contains(innerCoordinates)) {
 				return subGroup;
 			}
@@ -241,6 +277,12 @@ public class ShapeGroup {
 		}
 		return ancestors;
 	}
+	/**
+	 * @peerObjects
+	 */
+	private List<ShapeGroup> getSiblingsPrivate() {
+		return parent.getSubgroups();
+	}
 	
 	/**
 	 * Sets the given extent as this ShapeGroup its extent, expressed in this ShapeGroup its outer coordinate system.
@@ -262,18 +304,19 @@ public class ShapeGroup {
 	
 	// Defines the transformation between the inner and outer extent of this ShapeGroup
 	private void transformation(Extent inner, Extent outer) {
-		// OUTER TO INNER DEFINED TRANSFORMATION
+		// OUTER TO INNER
 		this.scaling[0] = (double) outer.getWidth() / inner.getWidth();
 		this.scaling[1] = (double) outer.getHeight() / inner.getHeight();
 		this.translation[0] = outer.getLeft() - this.scaling[0] * inner.getLeft();
 		this.translation[1] = outer.getTop() - this.scaling[1] * inner.getTop();
 		
-		// INNER TO OUTER DEFINED TRANSFORMATION
+		// INNER TO OUTER
 		this.scaling[2] = (double) inner.getWidth() / outer.getWidth();
 		this.scaling[3] = (double) inner.getHeight() / outer.getHeight();
 		this.translation[2] = inner.getLeft() - this.scaling[2] * outer.getLeft();
 		this.translation[3] = inner.getTop() - this.scaling[3] * outer.getTop();
 	}
+	
 	
 	/**
 	 * Returns the coordinates in this ShapeGroup its inner coordinate system of the point whose 
@@ -290,7 +333,6 @@ public class ShapeGroup {
 		}
 		ArrayList<ShapeGroup> ancestors = this.getAncestors();
 		IntPoint point = globalCoordinates;
-		
 		for (int i = ancestors.size() - 1; i >= 0; i--) {
 			ShapeGroup ancestor = ancestors.get(i);
 			
@@ -316,14 +358,12 @@ public class ShapeGroup {
 		}
 		ArrayList<ShapeGroup> ancestors = this.getAncestors();
 		IntVector vector = relativeGlobalCoordinates;
-		
 		for (int i = ancestors.size() - 1; i >= 0; i--) {
 			ShapeGroup ancestor = ancestors.get(i);
 			
 			int newX = (int) Math.round(ancestor.scaling[2] * vector.getX() + ancestor.translation[2]);
 			int newY = (int) Math.round(ancestor.scaling[3] * vector.getY() + ancestor.translation[3]);
 			vector = new IntVector(newX, newY);
-			
 		}
 		return vector;
 	}
@@ -342,12 +382,11 @@ public class ShapeGroup {
 			throw new IllegalArgumentException("The given IntPoint is null.");
 		}
 		IntPoint point = innerCoordinates;
-		
+
 		for(ShapeGroup shapeGroup = this; shapeGroup != null; shapeGroup = shapeGroup.parent) {
 			int newX = (int) Math.round(shapeGroup.scaling[0] * point.getX() + shapeGroup.translation[0]);
 			int newY = (int) Math.round(shapeGroup.scaling[1] * point.getY() + shapeGroup.translation[1]);
 			point = new IntPoint(newX, newY);
-			
 		}
 		return point;
 	}
@@ -364,11 +403,24 @@ public class ShapeGroup {
 	 * 										
 	 */
 	public void bringToFront() {
-		if (this.parent != null) {
-			this.parent.subGroups.remove(this);
-			this.parent.subGroups.add(0, this);
+		// Remove the child from the children
+		if (this.previousSibling != null) {
+			this.previousSibling.nextSibling = this.nextSibling;
+		} else {
+			parent.firstChild = this.nextSibling;
 		}
-	}
+		if (this.nextSibling != null) {
+			this.nextSibling.previousSibling = this.previousSibling;
+		} else {
+			parent.lastChild = this.previousSibling;
+		}
+		
+		// Add the child at the front
+		parent.firstChild.previousSibling = this;
+		this.nextSibling = parent.firstChild;
+		this.previousSibling = null;
+		parent.firstChild = this;
+		}
 	
 	/**
 	 * Moves this ShapeGroup to the back of its parent's list of subgroups.
@@ -381,13 +433,25 @@ public class ShapeGroup {
 	 * @post | getParentGroup() == null ||  getParentGroup().getSubgroup(getParentGroup().getSubgroupCount() - 1).equals(this)
 	 */
 	public void sendToBack() {
-		if (this.parent != null) {
-		this.parent.subGroups.remove(this);
-		this.parent.subGroups.add(this);	
+		// Remove the child from the children
+		if (this.previousSibling != null) {
+			this.previousSibling.nextSibling = this.nextSibling;
+		} else {
+			parent.firstChild = this.nextSibling;
 		}
-	}
+		if (this.nextSibling != null) {
+			this.nextSibling.previousSibling = this.previousSibling;
+		} else {
+			parent.lastChild = this.previousSibling;
+		}
+		
+		// Add the child at the back
+		parent.lastChild.nextSibling = this;
+		this.previousSibling = parent.lastChild;
+		this.nextSibling = null;
+		parent.lastChild = this;
+		}
 	
-	// No documentation required
 	public java.lang.String getDrawingCommands() {
 		StringBuilder commands = new StringBuilder();
 
@@ -400,11 +464,10 @@ public class ShapeGroup {
 			return commands.toString();
 		} 
 		else {
-			for (int i = subGroups.size() - 1; i >= 0; i--) {
-				ShapeGroup subGroup = subGroups.get(i);
+			for (ShapeGroup child = this.lastChild; child != null; child = child.previousSibling) {
 				commands.append("pushTranslate " + this.translation[0] + " " + this.translation[1] + "\n");
 				commands.append("pushScale " + this.scaling[0] + " " + this.scaling[1] + "\n");
-				commands.append(subGroup.getDrawingCommands());
+				commands.append(child.getDrawingCommands());
 				commands.append("popTransform" + "\n");
 				commands.append("popTransform" + "\n");
 			}

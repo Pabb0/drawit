@@ -3,7 +3,6 @@ package drawit.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,8 +12,6 @@ import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.PointArrays;
 import drawit.RoundedPolygon;
-import drawit.shapegroups1.Extent;
-import drawit.shapegroups1.ShapeGroup;
 
 
 class TestFile {
@@ -121,7 +118,6 @@ class TestFile {
 		IntPoint iPoint15 = new IntPoint(0, 0);
 		IntPoint iPoint16 = new IntPoint(200, 200);
 		IntPoint iPoint17 = new IntPoint(175, 125);
-		IntPoint iPoint18 = new IntPoint(-200, 200);
 		
 		
 		IntVector iDiff1 = iPoint1.minus(iPoint2);
@@ -268,7 +264,6 @@ class TestFile {
 
 	    RoundedPolygon polygon2 = new RoundedPolygon();
 	    polygon2.setVertices(iPointArray7);
-	    RoundedPolygon polygon3 = new RoundedPolygon();
 	    polygon1.setVertices(iPointArray5);
 	    
 	  

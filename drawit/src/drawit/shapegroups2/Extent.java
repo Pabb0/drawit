@@ -1,4 +1,4 @@
-package drawit.shapegroups1;
+package drawit.shapegroups2;
 
 import drawit.IntPoint;
 
@@ -13,41 +13,41 @@ import drawit.IntPoint;
 public class Extent {
 	
 	/**
-	 * @invar | left < right
-	 * @invar | top < bottom
+	 * @invar | width > 0
+	 * @invar | height > 0
 	 */
 	private int left;
-	private int right;
 	private int top;
-	private int bottom;
+	private int width;
+	private int height;
 
 	/**
 	 * @mutates | this
 	 * 
-	 * @throws IllegalArgumentException if {@code left} is not smaller than {@code right}.
-	 * 		| left >= right
-	 * @throws IllegalArgumentException if {@code top} is not smaller than {@code bottom}.
-	 * 		| top >= bottom
+	 * @throws IllegalArgumentException if {@code width} is not larger than 0.
+	 * 		| width < 0
+	 * @throws IllegalArgumentException if {@code height} is not larger than 0.
+	 * 		| height < 0
 	 * @post This object's left value equals the given left value.
 	 * 		| this.getLeft() == left
-	 * @post This object's right value equals the given right value.
-	 * 		| this.getRight() == right
 	 * @post This object's top value equals the given top value.
 	 * 		| this.getTop() == top
-	 * @post This object's bottom value equals the given bottom value.
-	 * 		| this.getBottom() == bottom
+	 * @post This object's width value equals the given width value.
+	 * 		| this.getWidth() == width
+	 * @post This object's height value equals the given height value.
+	 * 		| this.getHeight() == height
 	 */
-	private Extent(int left, int top, int right, int bottom) {	
-		if (!(left < right)) {
-			throw new IllegalArgumentException("The given leftside of the extent is larger than or equals the rightside of the extent.");
+	private Extent(int left, int top, int width, int height) {	
+		if (!(width > 0)) {
+			throw new IllegalArgumentException("The given width of the extent is smaller than zero.");
 		}
-		if (!(top < bottom)) {
-			throw new IllegalArgumentException("The given topside of the extent is larger than or equals the bottomside of the extent. (y-axis points downwards).");
+		if (!(height > 0)) {
+			throw new IllegalArgumentException("The given height of the extent is smaller than zero.");
 		}
 		this.left = left;
-		this.right = right;
 		this.top = top;
-		this.bottom = bottom;
+		this.width = width;
+		this.height = height;
 	}
 	
 	/**
@@ -59,9 +59,10 @@ public class Extent {
 	
 	/**
 	 * Returns the right side of this extent.
+	 * @post | result == this.getLeft() + this.getWidth()
 	 */
 	public int getRight() {
-		return this.right;
+		return (this.left + this.width);
 	}
 	
 	/**
@@ -72,28 +73,25 @@ public class Extent {
 	}
 	
 	/**
-	 * Returns the bottom side of this extent.
+	 * Returns the bottom side of this extent
+	 * @post | result == this.getTop() + this.getHeight()
 	 */
 	public int getBottom() {
-		return this.bottom;
+		return (this.top + this.height);
 	}
 	
 	/**
 	 * Returns the width of this extent. The width equals the right side of this extent minus the left side of this extent.
-	 * @post | result == this.getRight() - this.getLeft()
-	 * @post | result > 0
 	 */
 	public int getWidth() {
-		return (this.right - this.left);
+		return this.width;
 	}
 	
 	/**
 	 * Returns the width of this extent. The width equals the bottom side of this extent minus the top side of this extent.
-	 * @post | result == this.getBottom() - this.getTop()
-	 * @post | result > 0
 	 */
 	public int getHeight() {
-		return (this.bottom - this.top);
+		return this.height;
 	}	
 	
 	/**
@@ -147,7 +145,7 @@ public class Extent {
 		if (!(top < bottom)) {
 			throw new IllegalArgumentException("The given topside of the extent is larger than or equals the bottomside of the extent. (y-axis points downwards).");
 		}
-		return new Extent(left, top, right, bottom);
+		return new Extent(left, top, right-left, bottom-top);
 	}
 	
 	/**
@@ -170,7 +168,7 @@ public class Extent {
 		if (!(height > 0)) {
 			throw new IllegalArgumentException("The given height value is not larger than zero.");
 		}
-		return new Extent(left, top, left + width, top + height);
+		return new Extent(left, top, width, height);
 	}
 	
 	
@@ -183,11 +181,11 @@ public class Extent {
 	 * 		| newLeft >= getRight()
 	 */
 	public Extent withLeft(int newLeft) {
-		if (!(newLeft < right)) {
+		if (!(newLeft < this.getRight())) {
 			throw new IllegalArgumentException("The given leftside is larger than or equals the right side of this extent.");
 		}
 		
-		return new Extent(newLeft, top, right, bottom);
+		return new Extent(newLeft, this.getTop(), this.getRight() - newLeft, this.getHeight());
 	}
 	/**
 	 * Returns a new extent that has the given top coordinate and the same left, right, and bottom coordinate as this extent.
@@ -198,10 +196,10 @@ public class Extent {
 	 * 		| newTop >= getBottom()
 	 */
 	public Extent withTop(int newTop) {
-		if (!(newTop < bottom)) {
+		if (!(newTop < this.getBottom())) {
 			throw new IllegalArgumentException("The given top side is larger than or equals the bottom side of this extent.");
 		}
-			return new Extent(left, newTop, right, bottom);
+			return new Extent(left, newTop, this.getWidth(), this.getBottom() - newTop);
 	}
 	
 	/**
@@ -216,7 +214,7 @@ public class Extent {
 		if (!(newRight > left)) {
 			throw new IllegalArgumentException("The given right side is smaller than or equals the left side of this extent.");
 		}
-			return new Extent(left, top, newRight, bottom);
+			return new Extent(this.getLeft(), this.getTop(), newRight-this.getLeft(), this.getHeight());
 
 	}
 	
@@ -232,7 +230,7 @@ public class Extent {
 		if (!(newBottom > top)) {
 			throw new IllegalArgumentException("The given bottom side is larger than or equals the top side of this extent.");
 		}
-			return new Extent(left, top, right, newBottom);
+			return new Extent(left, top, this.getWidth(), newBottom - this.getTop());
 
 	}
 	
@@ -248,7 +246,7 @@ public class Extent {
 		if (!(newWidth > 0)) {
 			throw new IllegalArgumentException("The given width is not larger than 0.");
 		}
-		return new Extent(left, top, left + newWidth, bottom);
+		return new Extent(this.getLeft(), this.getTop(), newWidth, this.getHeight());
 	}
 	
 	/**
@@ -263,7 +261,7 @@ public class Extent {
 		if (!(newHeight > 0)) {
 			throw new IllegalArgumentException("The given height is not larger than 0.");
 		}
-		return new Extent(left, top, right, bottom + newHeight);
+		return new Extent(this.getLeft(), this.getTop(), this.getWidth(), newHeight);
 	}
 	
 }
