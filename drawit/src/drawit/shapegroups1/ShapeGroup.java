@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import logicalcollections.LogicalList;
 import drawit.shapegroups1.Extent;
 import drawit.IntPoint;
 import drawit.IntVector;
@@ -16,8 +17,10 @@ import drawit.RoundedPolygon;
 * 		| getSubgroups().stream().allMatch(child -> child.getParentGroup() == this) && getShape() == null
 * @invar This shapeGroup is the root ShapeGroup (i.e. it has no parent) or else it is among its parent's children.
 * 		| getParentGroup() == null || getParentGroup().getSubgroups().contains(this)
-* @invar 	
+* @invar This ShapeGroups extent and original extent never equal null.	
 * 		| getExtent() != null && getOriginalExtent() != null
+* @invar This ShapeGroups subgroups are all distinct.
+* 		| LogicalList.distinct(getSubgroups())
 *
 */
 public class ShapeGroup {
@@ -29,7 +32,10 @@ public class ShapeGroup {
 	 * 		| subGroups.stream().allMatch(child -> child.parent == this) && shape == null 
 	 * @invar This shapeGroup is the root ShapeGroup (i.e. it has no parent) or else it is among its parent's children.
 	 * 		| parent == null || parent.subGroups.contains(this)
-	 * @invar	| getAncestors().contains(this)
+	 * @invar This ShapeGroup has itself as one of its ancestors.
+	 * 		| getAncestors().contains(this)
+	 * @invar This ShapeGroups subgroups are all distinct.
+	 * 		| LogicalList.distinct(subGroups)
 	 * @representationObject
 	 * @peerObjects
 	 */
@@ -55,8 +61,14 @@ public class ShapeGroup {
 	private double[] translation;
 	private double[] scaling; 
 	
-	
+	/**
+	 * @throws if {@code shape} is null.
+	 * 		| shape == null
+	 */
 	public ShapeGroup(RoundedPolygon shape) {
+		if (shape == null) {
+			throw new IllegalArgumentException("The given shape is null.");
+		}
 		this.subGroups = new ArrayList<ShapeGroup>();
 		this.parent = null;
 		this.shape = shape;
@@ -88,12 +100,17 @@ public class ShapeGroup {
 	}
 	
 	/**
+	 * @throws if {@code subgroups} is null.
+	 * 		| subgroups == null
 	 * @throws if any ShapeGroup in the subgroups already has a parent.
 	 *  	| Arrays.stream(subgroups).anyMatch(s -> s.getParentGroup() != null)
-	 *  @throws if one of the elements is zero.
+	 * @throws if one of the elements is zero.
 	 *  	| Arrays.stream(subgroups).anyMatch(s -> s == null)
 	 */
 	public ShapeGroup(ShapeGroup[] subgroups) {
+		if (subgroups == null) {
+			throw new IllegalArgumentException("The given subgroups is null.");
+		}
 		if(Arrays.stream(subgroups).anyMatch(s -> s.getParentGroup() != null)) {
 			throw new IllegalArgumentException("One or more ShapeGroups in the given array already have/has a parent.");
 		}
@@ -165,7 +182,7 @@ public class ShapeGroup {
 	public java.util.List<ShapeGroup> getSubgroups() {
 		if (subGroups.size() != 0) {
 			return List.copyOf(subGroups);
-		} else {
+		} else { // Leaf
 			return null;
 		}
 	}
@@ -189,7 +206,10 @@ public class ShapeGroup {
 	
 	/**
 	 * Returns the number of ShapeGroups that this ShapeGroup has in its subgroup.
+	 * @post
+	 * 		| result == 0 || result == getSubgroups().size()
 	 */
+	
 	public int getSubgroupCount() {return subGroups.size();}
 	
 	/**
@@ -227,9 +247,12 @@ public class ShapeGroup {
 	 * Returns all the ancestors of a ShapeGroup, including itself. 
 	 * (i.e the ShapeGroup itself, its parent, the parent of its parent, the parent of the parent of its parent,...).
 	 * 
-	 * @post | result != null
-	 * 
-	 * @peerObjects
+	 * @post The result is not null.
+	 * 		| result != null
+	 * @post Every element in this list either has no parent or its parent is also present in this list.
+	 * 		| result.stream().allMatch(a -> a.parent == null || result.contains(a.parent))
+	 * @post This ShapeGroup is always one of its ancestors.
+	 * 		| result.contains(this)
 	 */
 	private ArrayList<ShapeGroup> getAncestors() {
 		ArrayList<ShapeGroup> ancestors = new ArrayList<ShapeGroup>();

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import drawit.shapegroups2.Extent;
+import logicalcollections.LogicalList;
 import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.RoundedPolygon;
@@ -17,8 +18,11 @@ import drawit.RoundedPolygon;
 * 		| getSubgroups().stream().allMatch(child -> child.getParentGroup() == this) && getShape() == null
 * @invar This shapeGroup is the root ShapeGroup (i.e. it has no parent) or else it is among its parent's children.
 * 		| getParentGroup() == null || getParentGroup().getSubgroups().contains(this)
-* @invar 	
+* @invar This ShapeGroups extent and original extent never equal null.	
 * 		| getExtent() != null && getOriginalExtent() != null
+* @invar This ShapeGroups subgroups are all distinct.
+* 		| LogicalList.distinct(getSubgroups())
+*
 */
 public class ShapeGroup {
 	
@@ -29,18 +33,22 @@ public class ShapeGroup {
 	 * 		| firstChild == null && shape != null ||
 	 * 		| (firstChild != null && shape == null)
 	 * 
-	 * @invar	| nextSibling == null || nextSibling.previousSibling == this
-	 * @invar	| previousSibling == null || previousSibling.nextSibling == this
 	 * @invar 	| getSiblingsPrivate().stream().allMatch(sibling -> sibling.parent == this.parent)
 	 * @invar This shapeGroup is the root ShapeGroup (i.e. it has no parent) or else it is among its parent's children.
 	 * 		| parent == null || parent.getSiblingsPrivate().contains(this)
-	 * @invar	| getAncestors().contains(this)
+	 * @invar This ShapeGroup has itself as one of its ancestors.
+	 * 		| getAncestors().contains(this)
+	 * @invar This ShapeGroup is distinct from all of its siblings.
+	 * 		| LogicalList.distinct(getSiblingsPrivate())
 	 */
 	private ShapeGroup parent;
 	
 	/**
 	 * @peerObjects
 	 * @invar 	| (firstChild == null && lastChild == null) || (firstChild != null && lastChild != null)
+	 * @invar	| nextSibling == null || nextSibling.previousSibling == this
+	 * @invar	| previousSibling == null || previousSibling.nextSibling == this
+ 
 	 */
 	private ShapeGroup firstChild;
 	private ShapeGroup lastChild;
@@ -64,8 +72,14 @@ public class ShapeGroup {
 	private double[] translation;
 	private double[] scaling; 
 	
-	
+	/**
+	 * @throws if {@code shape} is null.
+	 * 		| shape == null
+	 */
 	public ShapeGroup(RoundedPolygon shape) {
+		if (shape == null) {
+			throw new IllegalArgumentException("The given shape is null.");
+		}
 		this.parent = null;
 		this.firstChild = null;
 		this.lastChild = null;
@@ -102,12 +116,17 @@ public class ShapeGroup {
 	}
 	
 	/**
+	 * @throws if {@code subgroups} is null.
+	 * 		| subgroups == null
 	 * @throws if any ShapeGroup in the subgroups already has a parent.
 	 *  	| Arrays.stream(subgroups).anyMatch(s -> s.getParentGroup() != null)
-	 *  @throws if one of the elements is zero.
+	 * @throws if one of the elements is zero.
 	 *  	| Arrays.stream(subgroups).anyMatch(s -> s == null)
 	 */
 	public ShapeGroup(ShapeGroup[] subgroups) {
+		if (subgroups == null) {
+			throw new IllegalArgumentException("The given subgroups is null.");
+		}
 		if(Arrays.stream(subgroups).anyMatch(s -> s.getParentGroup() != null)) {
 			throw new IllegalArgumentException("One or more ShapeGroups in the given array already have/has a parent.");
 		}
@@ -219,6 +238,8 @@ public class ShapeGroup {
 	
 	/**
 	 * Returns the number of ShapeGroups that this ShapeGroup has in its subgroup.
+	 * @post
+	 * 		| result == 0 || result == getSubgroups().size()
 	 */
 	public int getSubgroupCount() {
 		if (this.firstChild == null) { // Leaf
@@ -264,8 +285,10 @@ public class ShapeGroup {
 	 * (i.e the ShapeGroup itself, its parent, the parent of its parent, the parent of the parent of its parent,...).
 	 * 
 	 * @post | result != null
-	 * 
-	 * @peerObjects
+	 * @post
+	 * 		| result.stream().allMatch(a -> a.parent == null || result.contains(a.parent))
+	 * @post
+	 * 		| result.contains(this)
 	 */
 	private ArrayList<ShapeGroup> getAncestors() {
 		ArrayList<ShapeGroup> ancestors = new ArrayList<ShapeGroup>();
@@ -278,10 +301,20 @@ public class ShapeGroup {
 		return ancestors;
 	}
 	/**
-	 * @peerObjects
+	 * Returns all the siblings of this ShapeGroup.
+	 * @post This ShapeGroup is part of the result.
+	 * 		| result.size() >= 1 && result.contains(this)
+	 * @post All the siblings have the same parent.
+	 * 		| result.stream().allMatch(a -> a.parent == this.parent)
 	 */
 	private List<ShapeGroup> getSiblingsPrivate() {
-		return parent.getSubgroups();
+		if (parent != null) {
+			return parent.getSubgroups();
+		} else {
+			ArrayList<ShapeGroup> result = new ArrayList<ShapeGroup>();
+			result.add(this);
+			return result;
+		}
 	}
 	
 	/**
@@ -324,7 +357,6 @@ public class ShapeGroup {
 	 * 
 	 * @throws if {@code globalCoordinates} is null.
 	 * 		| globalCoordinates == null
-	 * 
 	 * @inspects | this
 	 */
 	public IntPoint toInnerCoordinates(IntPoint globalCoordinates) {

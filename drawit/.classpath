@@ -8,5 +8,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="lib" path="C:/Users/thi12/Downloads/drawitgui_part2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/logicalcollections"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
