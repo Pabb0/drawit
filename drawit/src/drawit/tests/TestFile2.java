@@ -6,16 +6,16 @@ import org.junit.jupiter.api.Test;
 
 import drawit.IntPoint;
 import drawit.RoundedPolygon;
-import drawit.shapegroups1.*;
+import drawit.shapegroups2.Extent;
+import drawit.shapegroups2.LeafShapeGroup;
+import drawit.shapegroups2.NonleafShapeGroup;
+import drawit.shapegroups2.ShapeGroup;
 
-
-
-class TestFile {
+class TestFile2 {
 
 	@Test
 	void test() {
-		System.out.println("DEEL 3 - PART 1 - DRAWIT1");
-
+		System.out.println("DEEL 3 - PART 1 - DRAWIT2");
 		IntPoint iPoint1 = new IntPoint(100, 100);
 		IntPoint iPoint2 = new IntPoint(200, 100);
 		IntPoint iPoint3 = new IntPoint(200, 200);
@@ -116,9 +116,7 @@ class TestFile {
 	    assert shape1.getOriginalExtent().getTop() == 100;
 	    assert shape1.getOriginalExtent().getRight() == 200;
 	    assert shape1.getOriginalExtent().getBottom() == 200;
-
-	     
-
+	    
 	}
 
 }

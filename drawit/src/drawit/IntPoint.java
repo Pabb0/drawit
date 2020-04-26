@@ -1,183 +1,130 @@
 package drawit;
 
 /**
- * Each instance of this class represents an immutable abstraction for a point in 2D-space with integer values.
+ * An immutable abstraction for a point in the two-dimensional plane with {@code int} coordinates.
+ * 
  * @immutable
  */
 public class IntPoint {
+	
 	private final int x;
 	private final int y;
 
-	/**
-	 * Initializes this object with the given x-value and y-value.
+	/** Returns this point's X coordinate. */
+	public int getX() { return x; }
+	/** Returns this point's Y coordinate. */
+	public int getY() { return y; }
+	
+	/** Returns {@code true} if this point has the same coordinates as the given point; returns {@code false} otherwise.
+	 * 
+	 * @pre | other != null
+	 * @post | result == (this.getX() == other.getX() && this.getY() == other.getY()) 
+	 */
+	public boolean equals(IntPoint other) {
+		return other.x == x && other.y == y;
+	}
+	
+	/** Initializes this point with the given coordinates.
 	 * 
 	 * @mutates | this
-	 * 
-	 * @post This object's x-value equals the given x-value.
-	 * 		| this.getX() == x
-	 * @post This object's y-value equals the given y-value.
-	 * 		| this.getY() == y
+	 * @post | getX() == x
+	 * @post | getY() == y
 	 */
 	public IntPoint(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
-
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
-	}
 	
-	/**
-	 * Returns whether this point and the given point are equal.
+	/** Returns an {@code IntVector} object representing the displacement from {@code other} to {@code this}.
 	 * 
-	 * @pre Argument {@code other} is not {@code null}.
-	 * 		| other != null
-	 * @post The result is true if the x-value of this point and the given point are equal and the y-value of this point and the given point are equal.
-	 * 		| result == (this.getX() == other.getX() && this.getY() == other.getY())
-	 */
-	public boolean equals(IntPoint other) {
-		return (x == other.getX() && y == other.getY());
-	}
-	
-	public static boolean equals(IntPoint p1, IntPoint p2) {
-		return
-				p1 == p2 ||
-				p1 != null && p2 != null &&
-				p1.equals(p2);
-	}
-	/**
-	 * Returns a new {@code IntPoint} object which is the addition of this {@code IntPoint} with the given {@code IntVector}.
-	 *
-	 * @inspects | this
-	 * @inspects | other
-	 * @creates | result
-	 *
-	 * @pre Argument {@code other} is not {@code null}.
-	 * 		| other != null
-	 * @pre The addition of the given vector to this point may not lead to an arithmetic overflow or underflow.
-	 * 		| !(this.getX() > 0 ? Integer.MAX_VALUE - this.getX() < other.getX() : Integer.MIN_VALUE - this.getX() > other.getX()) &&
-	 * 		| !(this.getY() > 0 ? Integer.MAX_VALUE - this.getY() < other.getY() : Integer.MIN_VALUE - this.getY() > other.getY())
-     * 
-	 * @post The resulting point is the sum of this point and the given vector
-	 * 		| (result.getX() == (this.getX() + other.getX())) && (result.getY() == (this.getY() + other.getY()))
-	 */
-	public IntPoint plus(IntVector other) {
-		if (this.getX() > 0
-            ? Integer.MAX_VALUE - this.getX() < other.getX()
-            : Integer.MIN_VALUE - this.getX() > other.getX()) {
-			throw new IllegalArgumentException("The x-value of the given vector leads to an arithmetic overflow/underflow.");
-		}
-		if (this.getY() > 0
-	        ? Integer.MAX_VALUE - this.getY() < other.getY()
-	        : Integer.MIN_VALUE - this.getY() > other.getY()) {
-			throw new IllegalArgumentException("The y-value of the given vector leads to an arithmetic overflow/underflow.");
-			}
-		
-		int xSum = this.getX() + other.getX();
-		int ySum = this.getY() + other.getY();
-
-		return new IntPoint(xSum, ySum);
-	}
-	
-	/**
-	 * Returns a new vector which is the difference between this point and the given point.
-	 * 
-	 * @inspects | this
-	 * @inspects | other
-	 * @creates | result
-	 * 
-	 * @pre Argument {@code other} is not {@code null}.
-	 * 		| other != null
-	 * @pre The addition of the given vector to this point may not lead to an arithmetic overflow or underflow.
-	 * 		| !(this.getX() > 0 ? Integer.MIN_VALUE + this.getX() > other.getX() : Integer.MAX_VALUE + this.getX() < other.getX()) &&
-	 * 		| !(this.getY() > 0 ? Integer.MIN_VALUE + this.getY() > other.getY() : Integer.MAX_VALUE + this.getY() < other.getY())
-	 * @post The resulting point is the sum of this point and the given vector
-	 * 		| (result.getX() == (this.getX() - other.getX())) && (result.getY() == (this.getY() - other.getY()))
-	 */
+	 * @pre | other != null
+	 * @post | result != null
+	 * @post | result.getX() == this.getX() - other.getX()
+	 * @post | result.getY() == this.getY() - other.getY()
+	 */ 
 	public IntVector minus(IntPoint other) {
-		if (this.getX() > 0
-	            ? Integer.MIN_VALUE + this.getX() > other.getX()
-	            : Integer.MAX_VALUE + this.getX() < other.getX()) {
-				throw new IllegalArgumentException("The x-value of the given point leads to an arithmetic overflow/underflow.");
-			}
-			if (this.getY() > 0
-		        ? Integer.MIN_VALUE + this.getY() > other.getY()
-		        : Integer.MAX_VALUE + this.getY() < other.getY()) {
-				throw new IllegalArgumentException("The y-value of the given point leads to an arithmetic overflow/underflow.");
-				}
-			
-		int xDiff = this.getX() - other.getX();
-		int yDiff = this.getY() - other.getY();
-
-		return new IntVector(xDiff, yDiff);
+		return new IntVector(x - other.x, y - other.y);
 	}
 	
 	/**
-	 * Returns true if and only if this point is on open line segment bc. An open line segment does not include its endpoints.
+	 * Returns true iff this point is on open line segment {@code bc}.
+	 * An open line segment does not include its endpoints.
 	 * 
-	 * @inspects | this
-	 * @inspects | b
-	 * @inspects | c
+	 * <p><b>Implementation hints:</b> Call this point {@code a}. First check if {@code ba} is collinear with {@code bc}. If not, return {@code false}.
+	 * Then check that the dot product of {@code ba} and {@code bc} is between zero and the dot product of {@code bc} and {@code bc}.
 	 * 
-	 * @pre Argument {@code b} is not {@code null}.
-	 * 		| b != null
-	 * @pre Argument {@code c} is not {@code null}.
-	 * 		| c != null
-	 * 
-	 * @post Returns true if the 3 points are collinear equals zero and this point lies in between the two given points.
-	 * 		| result == ((this.getX() * (b.getY() - c.getY())
-	 * 		|			+ b.getX() * (c.getY() - this.getY())
-	 * 		|			+ c.getX() * (this.getY() - b.getY()) == 0) &&
-	 * 		| (Math.min(b.getX(), c.getX()) < this.getX() && this.getX() < Math.max(b.getX(), c.getX()) ||
-	 * 		| Math.min(b.getY(), c.getY()) < this.getY() && this.getY() < Math.max(b.getY(), c.getY())))
-	 * 
+	 * @pre | b != null
+	 * @pre | 0 <= b.getX() && b.getX() <= 10000 && 0 <= b.getY() && b.getY() <= 10000 
+	 * @pre | c != null
+	 * @pre | 0 <= c.getX() && c.getX() <= 10000 && 0 <= c.getY() && c.getY() <= 10000
+	 * @post
+	 *    | result == (
+	 *    |   this.minus(b).isCollinearWith(c.minus(b)) &&
+	 *    |   0 < this.minus(b).dotProduct(c.minus(b)) &&
+	 *    |   this.minus(b).dotProduct(c.minus(b)) < c.minus(b).dotProduct(c.minus(b))
+	 *    | ) 
 	 */
 	public boolean isOnLineSegment(IntPoint b, IntPoint c) {
-		IntVector ba = this.minus(b);
+		IntPoint a = this;
+		// Is it on the carrier?
 		IntVector bc = c.minus(b);
-
-		if (!(ba.isCollinearWith(bc))) {
+		IntVector ba = a.minus(b);
+		if (!ba.isCollinearWith(bc))
 			return false;
-		}
-		
-		return (ba.dotProduct(bc) > 0 && ba.dotProduct(bc) < bc.dotProduct(bc));
+		long dotProduct = ba.dotProduct(bc);
+		return 0 < dotProduct && dotProduct < bc.dotProduct(bc);
 	}
 	
-	// No documentation required
-	public static boolean lineSegmentsIntersect(IntPoint a, IntPoint b, IntPoint c, IntPoint d) {
-		IntVector ab = b.minus(a);
-		IntVector ac = c.minus(a);
-		IntVector ad = d.minus(a);
-		IntVector ca = a.minus(c);
-		IntVector cb = b.minus(c);
-		IntVector cd = d.minus(c);
-
-		float con1 = Math.signum(ac.crossProduct(ab)) * Math.signum(ad.crossProduct(ab));
-		float con2 = Math.signum(ca.crossProduct(cd)) * Math.signum(cb.crossProduct(cd));
-
-		return (con1 < 0 && con2 < 0);
-	}
-
 	/**
-	 * Returns a new point whose x-value and y-value are the double representation of the integer x-value and integer y-value of this vector.
+	 * Returns a {@code DoublePoint} object that represents the same 2D point represented by this {@code IntPoint} object.
 	 * 
-	 * @inspects | this
-	 * @creates | result
-	 * 
-	 * @post The x-value of the result is equal to the x-value of this point.
-	 * 		| result.getX() == this.getX()
-	 * @post The y-value of the result is equal to the y-value of this point.
-	 * 		| result.getY() == this.getY()
+	 * @post | result != null
+	 * @post | result.getX() == this.getX()
+	 * @post | result.getY() == this.getY()
 	 */
 	public DoublePoint asDoublePoint() {
-		double xDouble = (double) this.getX();
-		double yDouble = (double) this.getY();
-
-		return new DoublePoint(xDouble, yDouble);
+		return new DoublePoint(this.x, this.y);
 	}
 
+	/** Returns an {@code IntPoint} object representing the point obtained by displacing this point by the given vector.
+	 * 
+	 * @pre | vector != null
+	 * @post | result != null
+	 * @post | result.getX() == this.getX() + vector.getX()
+	 * @post | result.getY() == this.getY() + vector.getY() 
+	 */
+	public IntPoint plus(IntVector vector) {
+		return new IntPoint(this.x + vector.getX(), this.y + vector.getY());
+	}
+	
+	/**
+	 * Returns true iff the open line segment {@code ab} intersects the open line segment {@code cd}.
+	 * 
+	 * <p><b>Implementation Hints:</b> Assume the precondition holds. Then {@code ab} intersects {@code cd} if and only if {@code ab} straddles the carrier of {@code cd} and
+	 * {@code cd} straddles the carrier of {@code ab}. Two points straddle a line if they are on opposite sides of the line. 
+	 * 
+	 * <p>Specifically, {@code cd} straddles the carrier of {@code ab} iff (the signum of the cross product of {@code ac} and {@code ab}) times
+     * (the signum of the cross product of {@code ad} and {@code ab}) is negative. 
+     * 
+     * <p>The signum of a number {@code x} is -1 if {@code x} is negative, 0 if {@code x} is zero, and {@code 1} otherwise. See {@link Math#signum(double)}.
+	 * 
+	 * @pre | a != null
+	 * @pre | b != null
+	 * @pre | c != null
+	 * @pre | d != null
+	 * @pre The line segments have at most one point in common.
+	 */
+	public static boolean lineSegmentsIntersect(IntPoint a, IntPoint b, IntPoint c, IntPoint d) {
+		// Check if cd straddles the carrier of ab and ab straddles the carrier of cd
+		IntVector ab = b.minus(a);
+		if (Math.signum(c.minus(a).crossProduct(ab)) * Math.signum(d.minus(a).crossProduct(ab)) < 0) {
+			// cd straddles the carrier of ab
+			
+			IntVector cd = d.minus(c);
+			return Math.signum(a.minus(c).crossProduct(cd)) * Math.signum(b.minus(c).crossProduct(cd)) < 0;
+			
+		} else
+			return false;
+	}
+	
 }

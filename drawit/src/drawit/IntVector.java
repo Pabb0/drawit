@@ -1,90 +1,79 @@
 package drawit;
 
 /**
- * Each instance of this class represents a vector in 2D-space with integer values.
+ * An instance of this class represents a displacement in the two-dimensional plane.
  * 
  * @immutable
  */
 public class IntVector {
+	
 	private final int x;
 	private final int y;
 	
+	public int getX() { return x; }
+	public int getY() { return y; }
+	
 	/**
-	 * Initializes this object with the given x-value and y-value.
-	 * 
+	 * @pre | other != null
+	 * @post | result == (getX() == other.getX() && getY() == other.getY())
+	 */
+	public boolean equals(IntVector other) {
+		return x == other.x && y == other.y;
+	}
+	
+	/**
+	 * @post | result == (other instanceof IntVector && equals((IntVector)other))
+	 */
+	@Override
+	public boolean equals(Object other) {
+		return other instanceof IntVector && equals((IntVector)other);
+	}
+	
+	/**
 	 * @mutates | this
-	 * 
-	 * @post This object's x-value equals the given x-value.
-	 * 		| this.getX() == x
-	 * @post This object's y-value equals the given y-value.
-	 * 		| this.getY() == y
+	 * @post | getX() == x
+	 * @post | getY() == y
 	 */
 	public IntVector(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	/**
-	 * Returns the dot product of this vector and the given vector.
-	 * 
-	 * @inspects | this
-	 * @inspects | other
-	 * 
-	 * @pre Argument {@code other} is not {@code null}.
-	 * 		| other != null
-	 * @post The result equals the dot product of this vector with the given vector.
-	 * 		| result == (long)this.getX() * other.getX() + (long)this.getY() * other.getY()
-	 */
-	// There will never be overflow when converting to long (Integer.MAX_VALUE * Integer.MAX_VALUE * 2 < Long.MAX_VALUE)
-	public long dotProduct(IntVector other) {
-		return (long)x * other.getX() + (long)y * other.getY();
-	}
-
 	/**
 	 * Returns the cross product of this vector and the given vector.
-	 * 
-	 * @inspects | this
-	 * @inspects | other
 	 *
-	 * @pre Argument {@code other} is not {@code null}.
-	 * 		| other != null
-	 * @post The result equals the cross product of this vector with the given vector
-	 * 		| result == (long)this.getX() * other.getY() - (long)this.getY() * other.getX()
+	 * @pre | other != null
+	 * @post | result == (long)getX() * other.getY() - (long)getY() * other.getX()
 	 */
-	// There will never be overflow when converting to long (Integer.MAX_VALUE * Integer.MAX_VALUE * 2 < Long.MAX_VALUE)
 	public long crossProduct(IntVector other) {
-		return (long)x * other.getY() - (long)y * other.getX();
+		return (long)x * other.y - (long)y * other.x;
 	}
-
+	
 	/**
 	 * Returns whether this vector is collinear with the given vector.
-	 * 
-	 * @inspects | this
-	 * @inspects | other
-	 * 
-	 * @pre Argument {@code other} is not {@code null}.
-	 * 		| other != null
-	 * @post Result is true if and only if the cross product with this vector and the other vector is zero.
-	 * 		| result == (this.crossProduct(other) == 0)
+	 *
+	 * @pre | other != null
+	 * @post | result == (this.crossProduct(other) == 0)
 	 */
 	public boolean isCollinearWith(IntVector other) {
-		return (this.crossProduct(other) == 0);
+		return crossProduct(other) == 0;
 	}
-
-	// No documentation required
 	
+	/**
+	 * Returns the dot product of this vector and the given vector.
+	 *
+	 * @pre | other != null
+	 * @post | result == (long)getX() * other.getX() + (long)getY() * other.getY()
+	 */
+	public long dotProduct(IntVector other) { return (long)x * other.x + (long)y * other.y; }
+	
+	/**
+	 * Returns a {@code DoubleVector} object that represents the same vector represented by this {@code IntVector} object.
+	 * 
+	 * @post | result != null
+	 */
 	public DoubleVector asDoubleVector() {
-		double xDouble = (double) this.getX();
-		double yDouble = (double) this.getY();
-
-		return new DoubleVector(xDouble, yDouble);
+		return new DoubleVector(this.x, this.y);
 	}
+	
 }

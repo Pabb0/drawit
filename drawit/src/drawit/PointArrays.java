@@ -8,172 +8,141 @@ import java.util.stream.IntStream;
  */
 public class PointArrays {
 	
-	private PointArrays() {}
-	
-	public static boolean equals(IntPoint[] ps1, IntPoint[] ps2) {
-		return
-				ps1 == ps2 ||
-				ps1 != null && ps2 != null &&
-				ps1.length == ps2.length &&
-				IntStream.range(0, ps1.length).allMatch(i -> IntPoint.equals(ps1[i], ps2[i]));
+	private PointArrays() { throw new AssertionError("This class is not meant to be instantiated"); }
+
+	/**
+	 * Returns {@code null} if the given array of points defines a proper polygon; otherwise, returns a string describing why it does not.
+	 *
+	 * <p>We interpret an array of N points as the polygon whose vertices are the given points and
+	 * whose edges are the open line segments between point I and point (I + 1) % N, for I = 0, ..., N - 1.
+	 *
+	 * <p>A proper polygon is one where no two vertices coincide and no vertex is on any edge and no two edges intersect.
+	 * 
+	 * <p>If there are exactly two points, the polygon is not proper. Notice that if there are more than two points and no two vertices
+	 * coincide and no vertex is on any edge, then no two edges intersect at more than one point.
+	 * 
+	 * @pre | points != null
+	 * @pre | Arrays.stream(points).allMatch(p -> p != null)
+	 * @inspects | points
+	 * @mutates nothing |
+	 * @post
+	 *    | (result == null) == (
+	 *    |     points.length != 2 &&
+	 *    |     IntStream.range(0, points.length).allMatch(i ->
+	 *    |         IntStream.range(0, points.length).allMatch(j -> i == j || !points[i].equals(points[j]))) &&
+	 *    |     IntStream.range(0, points.length).allMatch(i ->
+	 *    |         IntStream.range(0, points.length).allMatch(j -> !points[i].isOnLineSegment(points[j], points[(j + 1) % points.length]))) &&
+	 *    |     IntStream.range(0, points.length).allMatch(i ->
+	 *    |         IntStream.range(0, points.length).allMatch(j -> i == j ||
+	 *    |             !IntPoint.lineSegmentsIntersect(points[i], points[(i + 1) % points.length], points[j], points[(j + 1) % points.length])))
+	 *    | )
+	 */
+	public static String checkDefinesProperPolygon(IntPoint[] points) {
+		if (points.length == 2)
+			return "Line segment 0 intersects with line segment 1";
+		// If `points.length != 2`, then either some vertices are on some line segments or the line segments have at most one point in common.
+		for (int i = 0; i < points.length - 1; i++) {
+			for (int j = i + 1; j < points.length; j++) {
+				if (points[i].equals(points[j]))
+					return "IntPoint " + i + " coincides with point " + j;
+				if (points[i].isOnLineSegment(points[j], points[(j + 1) % points.length]))
+					return "IntPoint " + i + " is on line segment " + j;
+				if (points[j].isOnLineSegment(points[i], points[i + 1]))
+					return "IntPoint " + j + " is on line segment " + i;
+				if (IntPoint.lineSegmentsIntersect(points[i], points[i + 1], points[j], points[(j + 1) % points.length]))
+					return "Line segment " + i + " intersects with line segment " + j;
+			}
+		}
+		return null;
 	}
 	
 	/**
 	 * Returns a new array with the same contents as the given array.
-	 * 
+	 * @pre | points != null
+	 * @pre | Arrays.stream(points).allMatch(p -> p != null)
 	 * @inspects | points
+	 * @mutates nothing |
 	 * @creates | result
-	 * 
-	 * @pre Argument {@code points} is not {@code null}.
-	 * 		| points != null
-	 * @pre None of the elements of the given array are {@code null}.
-	 * 		| !(Arrays.stream(points).anyMatch(e -> e == null))
-	 * @post The contents of the given array and the result are equals.
-	 * 		| points.length == result.length &&
-	 * 		| Arrays.equals(points, 0, points.length, result, 0, result.length)
-	 * 
+	 * @post | result != null
+	 * @post | result.length == points.length
+	 * @post | IntStream.range(0, points.length).allMatch(i -> result[i].equals(points[i]))  
 	 */
 	public static IntPoint[] copy(IntPoint[] points) {
-		IntPoint[] newArray = new IntPoint[points.length];
-		
-		for(int i = 0; i < points.length; i++) {
-			newArray[i] = points[i];
-		}
-		
-		return newArray;
+		IntPoint[] result = new IntPoint[points.length];
+		for (int i = 0; i < points.length; i++)
+			result[i] = points[i];
+		return result;
 	}
+
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the given point inserted at the given index.
 	 * 
+	 * @pre | points != null
+	 * @pre | Arrays.stream(points).allMatch(p -> p != null)
+	 * @pre | 0 <= index && index <= points.length
+	 * @pre | point != null
 	 * @inspects | points
+	 * @mutates nothing |
 	 * @creates | result
-	 * 
-	 * @pre Argument {@code points} is not {@code null}.
-	 * 		| points != null
-	 * @pre None of the elements of the given array are {@code null}.
-	 * 		| !(Arrays.stream(points).anyMatch(e -> e == null))
-	 * @pre Argument {@code point} is not {@code null}.
-	 * 		| point != null
-	 * @pre The given index is between 0 (inclusive) and the length of the array (inclusive)
-	 * 		| 0 <= index && index <= points.length
-	 * @post The new array is equal to the given array with the given point inserted at the given index
-	 *		| points.length + 1 == result.length &&
-	 *		| Arrays.equals(points, 0, index, result, 0, index) &&
-	 *		| result[index] == point &&
-	 *		| Arrays.equals(points, index, points.length, result, index + 1, result.length)
+	 * @post | result != null
+	 * @post | result.length == points.length + 1
+	 * @post | IntStream.range(0, index).allMatch(i -> result[i].equals(points[i]))
+	 * @post | result[index].equals(point)
+	 * @post | IntStream.range(index, points.length).allMatch(i -> result[i + 1].equals(points[i]))
 	 */
+	// Javadoc notes:
+	// - It's also acceptable to allow null elements, but then you have to use Objects.equals or == to compare elements
+	// - It's also acceptable to compare elements using == in this case
 	public static IntPoint[] insert(IntPoint[] points, int index, IntPoint point) {
-		IntPoint[] newArray = new IntPoint[points.length + 1];
-
-		for(int i = 0; i < index; i++) {
-			newArray[i] = points[i];
-		}
-		newArray[index] = point;
-		for(int i = index + 1; i < newArray.length; i++) {
-			newArray[i] = points[i - 1];
-		}
-		return newArray;
+		IntPoint[] result = new IntPoint[points.length + 1];
+		for (int i = 0; i < index; i++)
+			result[i] = points[i];
+		result[index] = point;
+		for (int i = index; i < points.length; i++)
+			result[i + 1] = points[i];
+		return result;
 	}
+	
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the element at the given index removed.
 	 * 
+	 * @pre | points != null
+	 * @pre | Arrays.stream(points).allMatch(p -> p != null)
+	 * @pre | 0 <= index && index < points.length
 	 * @inspects | points
+	 * @mutates nothing |
 	 * @creates | result
-	 * 
-	 * @pre Argument {@code points} is not {@code null}.
-	 * 		| points != null
-	 * @pre None of the elements of the given array are {@code null}.
-	 * 		| !(Arrays.stream(points).anyMatch(e -> e == null))
-	 * @pre The given index is between 0 (inclusive) and the length of the array (exclusive)
-	 * 		| 0 <= index && index < points.length
-	 * @post The new array is equal to the given array with point at the given index from the given array removed.
-	 *		| points.length - 1 == result.length &&
-	 *		| Arrays.equals(points, 0, index, result, 0, index) &&
-	 *		| Arrays.equals(points, index + 1, points.length, result, index, result.length)
-	 * 
+	 * @post | result != null
+	 * @post | result.length == points.length - 1
+	 * @post | IntStream.range(0, index).allMatch(i -> result[i].equals(points[i]))
+	 * @post | IntStream.range(index + 1, points.length).allMatch(i -> result[i - 1].equals(points[i]))
 	 */
 	public static IntPoint[] remove(IntPoint[] points, int index) {
-		IntPoint[] newArray = new IntPoint[points.length - 1];
-		
-		for(int i = 0; i < index; i++) {
-			newArray[i] = points[i];
-		}
-		for(int i = index; i < newArray.length; i++) {
-			newArray[i] = points[i + 1];
-		}
-		return newArray;
+		IntPoint[] result = new IntPoint[points.length - 1];
+		for (int i = 0; i < index; i++)
+			result[i] = points[i];
+		for (int i = index; i < result.length; i++)
+			result[i] = points[i + 1];
+		return result;
 	}
 	
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the element at the given index replaced by the given point.
 	 * 
+	 * @pre | points != null
+	 * @pre | 0 <= index && index < points.length
+	 * @pre | value != null
 	 * @inspects | points
+	 * @mutates nothing |
 	 * @creates | result
-	 * 
-	 * @pre Argument {@code points} is not {@code null}.
-	 * 		| points != null
-	 * @pre None of the elements of the given array are {@code null}.
-	 * 		| !(Arrays.stream(points).anyMatch(e -> e == null))
-	 * @pre Argument {@code point} is not {@code null}.
-	 * 		| point != null
-	 * @pre The given index is between 0 (inclusive) and the length of the array (exclusive)
-	 * 		| 0 <= index && index < points.length
-	 * @post The new array is equal to the given array with the given point replacing the point at the given index of the given array.
-	 *		| points.length == result.length &&
-	 *		| Arrays.equals(points, 0, index, result, 0, index) &&
-	 *		| result[index] == point &&
-	 *		| Arrays.equals(points, index + 1, points.length, result, index + 1, result.length)
+	 * @post | result != null
+	 * @post | result.length == points.length
+	 * @post | IntStream.range(0, points.length).allMatch(i -> result[i].equals(i == index ? value : points[i]))
 	 */
-	public static IntPoint[] update(IntPoint[] points, int index, IntPoint point) {
-		IntPoint[] newArray = new IntPoint[points.length];
-		for(int i = 0; i < index; i++) {
-			newArray[i] = points[i];
-		}
-		newArray[index] = point;
-		for(int i = index + 1; i < newArray.length; i++) {
-			newArray[i] = points[i];
-		}
-		return newArray;
+	public static IntPoint[] update(IntPoint[] points, int index, IntPoint value) {
+		IntPoint[] result = copy(points);
+		result[index] = value;
+		return result;
 	}
-	
-	
-	
-	/**
-	 * Returns {@code null} if the given array of points defines a proper polygon; otherwise, returns a string describing why it does not.
-	 * 
-	 * @inspects | points
-	 * @creates | result
-	 * 
-	 * @pre Argument {@code points} is not {@code null}.
-	 * 		| points != null
-	 * @pre None of the elements of the given array are {@code null}.
-	 * 		| !(Arrays.stream(points).anyMatch(e -> e == null))
-	 * @post The result is {@code null} if the given array of points defines a proper polygon.
-	 * 		 A proper polygon is one where no two vertices coincide, no vertex is on any edge of the polygon and no two edges of the polygon intersect.
-	 * 		 A proper polygon also has at least 3 vertices.
-	 */
-	public static String checkDefinesProperPolygon(IntPoint[] points) {
-		if (points.length <= 2) {
-			return "The given array of points does not define a proper polygon because the array contains two or less points. (The given array contains " + String.valueOf(points.length) + " points).";
-		}
-		for(int i = 0; i < points.length - 1; i++) {
-			for(int j = i + 1; j < points.length; j++) {
-				if (points[i].equals(points[j])) {
-					return "The given array of points does not define a proper polygon because at least two vertices coincide. (vertex " + String.valueOf(i) + " and vertex " + String.valueOf(j) + " from the array).";
-				}
-				if (points[j].isOnLineSegment(points[i], points[(i + 1)])) {
-					return "The given array of points does not define a proper polygon because at least one vertex is on any edge. (vertex " + String.valueOf(j) + " is on the line between vertex " + String.valueOf(i) + " and vertex " + String.valueOf((i+1)) + " ).";
-				}
-				if (points[i].isOnLineSegment(points[j], points[(j + 1) % points.length])) {
-					return "The given array of points does not define a proper polygon because at least one vertex is on any edge. (vertex " + String.valueOf(i) + " is on the line between vertex " + String.valueOf(j) + " and vertex " + String.valueOf((j+1) % points.length) + " ).";
-				}
-				if (i != j && IntPoint.lineSegmentsIntersect(points[i], points[(i + 1) % points.length], points[j], points[(j + 1) % points.length])) {
-					return "The given array of points does not define a proper polygon because at least two edges intersect. (The line between vertex " + String.valueOf(i) + " and vertex " + String.valueOf((i+1) % points.length) + " intersects with the line between vertex" + String.valueOf(j) + " and vertex " + String.valueOf((j+1) % points.length) + ").";
-					
-				}
-			}
-		}
-		
-		return null;
-	}
+
 }

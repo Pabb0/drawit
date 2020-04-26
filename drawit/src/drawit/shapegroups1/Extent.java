@@ -3,267 +3,375 @@ package drawit.shapegroups1;
 import drawit.IntPoint;
 
 /**
- * Each instance of this class represents a nonempty rectangular area in a 2D coordinate system, whose edges are parallel to the coordinate axes.
+ * Each instance of this class represents a nonempty rectangular area in a 2D coordinate
+ * system, whose edges are parallel to the coordinate axes.
+ * 
+ * This class must deal with illegal arguments defensively.
+ * 
+ * @immutable
+ * 
  * @invar | getLeft() < getRight()
  * @invar | getTop() < getBottom()
- * @invar | getWidth() > 0
- * @invar | getHeight() > 0
+ * @invar | getRight() < 0 || getRight() - Integer.MAX_VALUE <= getLeft()
+ * @invar | 0 <= getLeft() || getRight() <= getLeft() + Integer.MAX_VALUE
+ * @invar | getBottom() < 0 || getBottom() - Integer.MAX_VALUE <= getTop()
+ * @invar | 0 <= getTop() || getBottom() <= getTop() + Integer.MAX_VALUE
+ * @invar | getWidth() == getRight() - getLeft()
+ * @invar | getHeight() == getBottom() - getTop()
  */
-
 public class Extent {
-	
+
 	/**
 	 * @invar | left < right
 	 * @invar | top < bottom
+	 * @invar | right < 0 || right - Integer.MAX_VALUE <= left
+	 * @invar | 0 <= left || right <= left + Integer.MAX_VALUE
+	 * @invar | bottom < 0 || bottom - Integer.MAX_VALUE <= top
+	 * @invar | 0 <= top || bottom <= top + Integer.MAX_VALUE
 	 */
-	private int left;
-	private int right;
-	private int top;
-	private int bottom;
+	private final int left;
+	private final int top;
+	private final int right;
+	private final int bottom;
 
 	/**
-	 * @mutates | this
+	 * Returns the X coordinate of the edge parallel to the Y axis
+	 * with the smallest X coordinate.
+	 */
+	public int getLeft() { return left; }
+	/**
+	 * Returns the Y coordinate of the edge parallel to the X axis
+	 * with the smallest Y coordinate.
+	 */
+	public int getTop() { return top; }
+	/**
+	 * Returns the X coordinate of the edge parallel to the Y axis
+	 * with the largest X coordinate.
+	 */
+	public int getRight() { return right; }
+	/**
+	 * Returns the Y coordinate of the edge parallel to the X axis
+	 * with the largest Y coordinate.
+	 */
+	public int getBottom() { return bottom; }
+	/**
+	 * Returns the distance between the edges that are parallel to the Y axis.
+	 */
+	public int getWidth() { return right - left; }
+	/**
+	 * Returns the distance between the edges that are parallel to the X axis.
+	 */
+	public int getHeight() { return bottom - top; }
+	
+	/**
+	 * Returns the top-left corner of this extent.
 	 * 
-	 * @throws IllegalArgumentException if {@code left} is not smaller than {@code right}.
-	 * 		| left >= right
-	 * @throws IllegalArgumentException if {@code top} is not smaller than {@code bottom}.
-	 * 		| top >= bottom
-	 * @post This object's left value equals the given left value.
-	 * 		| this.getLeft() == left
-	 * @post This object's right value equals the given right value.
-	 * 		| this.getRight() == right
-	 * @post This object's top value equals the given top value.
-	 * 		| this.getTop() == top
-	 * @post This object's bottom value equals the given bottom value.
-	 * 		| this.getBottom() == bottom
+	 * @post | result != null
+	 * @post | result.equals(new IntPoint(getLeft(), getTop()))
 	 */
-	private Extent(int left, int top, int right, int bottom) {	
-		if (!(left < right)) {
-			throw new IllegalArgumentException("The given leftside of the extent is larger than or equals the rightside of the extent.");
-		}
-		if (!(top < bottom)) {
-			throw new IllegalArgumentException("The given topside of the extent is larger than or equals the bottomside of the extent. (y-axis points downwards).");
-		}
-		this.left = left;
-		this.right = right;
-		this.top = top;
-		this.bottom = bottom;
-	}
+	public IntPoint getTopLeft() { return new IntPoint(left, top); }
 	
 	/**
-	 * Returns the left side of this extent.
-	 */
-	public int getLeft() {
-		return this.left;
-	}
-	
-	/**
-	 * Returns the right side of this extent.
-	 */
-	public int getRight() {
-		return this.right;
-	}
-	
-	/**
-	 * Returns the top side of this extent.
-	 */
-	public int getTop() {
-		return this.top;
-	}
-	
-	/**
-	 * Returns the bottom side of this extent.
-	 */
-	public int getBottom() {
-		return this.bottom;
-	}
-	
-	/**
-	 * Returns the width of this extent. The width equals the right side of this extent minus the left side of this extent.
-	 * @post | result == this.getRight() - this.getLeft()
-	 * @post | result > 0
-	 */
-	public int getWidth() {
-		return (this.right - this.left);
-	}
-	
-	/**
-	 * Returns the width of this extent. The width equals the bottom side of this extent minus the top side of this extent.
-	 * @post | result == this.getBottom() - this.getTop()
-	 * @post | result > 0
-	 */
-	public int getHeight() {
-		return (this.bottom - this.top);
-	}	
-	
-	/**
-	 * Returns the point of the extent in the top left corner.
-	 * @post | result.getX() == this.getLeft()
-	 * @post | result.getY() == this.getTop()
+	 * Returns the bottom-right corner of this extent.
 	 * 
+	 * @post | result != null
+	 * @post | result.equals(new IntPoint(getRight(), getBottom()))
 	 */
-	public IntPoint getTopLeft() {
-		return new IntPoint(getLeft(), getTop());
-	}
+	public IntPoint getBottomRight() { return new IntPoint(right, bottom); }
 	
 	/**
-	 * Returns the point of the extent in the bottom right corner.
-	 * @post | result.getX() == this.getRight()
-	 * @post | result.getY() == this.getBottom()
-	 *  
-	 */
-	public IntPoint getBottomRight() {
-		return new IntPoint(getRight(), getBottom());
-	}
-	
-	/**
-	 * Returns true iff the given point is inside this extent.
-	 * @throws IllegalArgumentException if {@code point} is {@code null}.
-	 * 		| point == null
-	 * @post | result == (getLeft() <= point.getX() && getRight() >= point.getX() && getTop() <= point.getY() && getBottom() >= point.getY()) 
+	 * Returns whether this extent, considered as a closed set of points (i.e.
+	 * including its edges and its vertices), contains the given point.
 	 * 
+	 * @throws IllegalArgumentException if {@code point} is null
+	 *    | point == null
+	 * @post
+	 *    | result == (
+	 *    |     getLeft() <= point.getX() && point.getX() <= getRight() &&
+	 *    |     getTop() <= point.getY() && point.getY() <= getBottom()
+	 *    | ) 
 	 */
 	public boolean contains(IntPoint point) {
-		if (point == null) {
-			throw new IllegalArgumentException("The given point is null.");
-		}
-		return (getLeft() <= point.getX() && point.getX() <= getRight() &&
-				getTop() <= point.getY() && point.getY() <= getBottom());
+		return
+				getLeft() <= point.getX() && point.getX() <= getRight() &&
+				getTop() <= point.getY() && point.getY() <= getBottom();
 	}
+
 	/**
-	 * Returns an extent with the given left value, top value, right value and bottom value
-	 *
-	 * @creates | result
+	 * Returns whether this extent equals the given extent.
 	 * 
-	 * @throws IllegalArgumentException if {@code left} is not smaller than {@code right}.
-	 * 		| left >= right
-	 * @throws IllegalArgumentException if {@code top} is not smaller than {@code bottom}.
-	 * 		| top >= bottom
+	 * @post | result == (
+	 *       |     other != null &&
+	 *       |     getTopLeft().equals(other.getTopLeft()) &&
+	 *       |     getBottomRight().equals(other.getBottomRight())
+	 *       | )
 	 */
-	public static Extent ofLeftTopRightBottom(int left, int top, int right, int bottom) {
-		if (!(left < right)) {
-			throw new IllegalArgumentException("The given leftside of the extent is larger than or equals the rightside of the extent.");
-		}
-		if (!(top < bottom)) {
-			throw new IllegalArgumentException("The given topside of the extent is larger than or equals the bottomside of the extent. (y-axis points downwards).");
-		}
-		return new Extent(left, top, right, bottom);
+	public boolean equals(Extent other) {
+		return other != null && left == other.left && top == other.top && right == other.right && bottom == other.bottom;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + bottom;
+		result = prime * result + left;
+		result = prime * result + right;
+		result = prime * result + top;
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Extent other = (Extent) obj;
+		if (bottom != other.bottom)
+			return false;
+		if (left != other.left)
+			return false;
+		if (right != other.right)
+			return false;
+		if (top != other.top)
+			return false;
+		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return "Extent [left=" + left + ", top=" + top + ", right=" + right + ", bottom=" + bottom + "]";
+	}
+	private Extent(int left, int top, int width, int height) {
+		this.left = left;
+		this.top = top;
+		this.right = left + width;
+		this.bottom = top + height;
 	}
 	
 	/**
-	 * Returns an extent with the given left value, top value, width value and height value. The right value equals the left value plus the width value, the bottom value equals the top value plus the height value.
+	 * Returns an object representing the extent defined by the given left, top, width, and height.
 	 * 
-	 * @creates | result
-	 * 
-	 * @throws IllegalArgumentException if {@code width} is not larger than zero.
-	 * 		| width <= 0
-	 * @throws IllegalArgumentException if {@code height} is not larger than zero.
-	 * 		| height <= 0
-	 * 
-	 * @post | result.getRight() == left + width
-	 * @post | result.getBottom() == top + height
+	 * @throws IllegalArgumentException if the given width is not positive
+	 *    | width <= 0
+	 * @throws IllegalArgumentException if the given height is not positive
+	 *    | height <= 0
+	 * @throws IllegalArgumentException if the sum of {@code left} and {@code width} is greater than {@code Integer.MAX_VALUE}
+	 *    | Integer.MAX_VALUE - width < left 
+	 * @throws IllegalArgumentException if the sum of {@code top} and {@code height} is greater than {@code Integer.MAX_VALUE}
+	 *    | Integer.MAX_VALUE - height < top
+	 * @post | result != null
+	 * @post | result.getLeft() == left
+	 * @post | result.getTop() == top
+	 * @post | result.getWidth() == width
+	 * @post | result.getHeight() == height
 	 */
 	public static Extent ofLeftTopWidthHeight(int left, int top, int width, int height) {
-		if (!(width > 0)) {
-			throw new IllegalArgumentException("The given width value is not larger than zero.");
-		}
-		if (!(height > 0)) {
-			throw new IllegalArgumentException("The given height value is not larger than zero.");
-		}
-		return new Extent(left, top, left + width, top + height);
+		if (width <= 0)
+			throw new IllegalArgumentException("width is not positive");
+		if (height <= 0)
+			throw new IllegalArgumentException("height is not positive");
+		if (Integer.MAX_VALUE - width < left)
+			throw new IllegalArgumentException("left + width too large");
+		if (Integer.MAX_VALUE - height < top)
+			throw new IllegalArgumentException("top + height too large");
+		return new Extent(left, top, width, height);
 	}
 	
+	/**
+	 * Returns an object representing the extent defined by the given left, top, right, and bottom.
+	 * 
+	 * @throws IllegalArgumentException if the given right is not greater than the given left
+	 *    | right <= left
+	 * @throws IllegalArgumentException if the given bottom is not greater than the given top
+	 *    | bottom <= top
+	 * @throws IllegalArgumentException if the width of the given extent is greater than {@code Integer.MAX_VALUE}
+	 *    | 0 <= right && left < right - Integer.MAX_VALUE ||
+	 *    | left < 0 && left + Integer.MAX_VALUE < right
+	 * @throws IllegalArgumentException if the height of the given extent is greater than {@code Integer.MAX_VALUE}
+	 *    | 0 <= bottom && top < bottom - Integer.MAX_VALUE ||
+	 *    | top < 0 && top + Integer.MAX_VALUE < bottom
+	 * @post | result != null
+	 * @post | result.getLeft() == left
+	 * @post | result.getTop() == top
+	 * @post | result.getRight() == right
+	 * @post | result.getBottom() == bottom
+	 */
+	public static Extent ofLeftTopRightBottom(int left, int top, int right, int bottom) {
+		if (right <= left)
+			throw new IllegalArgumentException("right not greater than left");
+		if (bottom <= top)
+			throw new IllegalArgumentException("bottom not greater than top");
+		if (0 <= right && left < right - Integer.MAX_VALUE ||
+			left < 0 && left + Integer.MAX_VALUE < right)
+			throw new IllegalArgumentException("width too large");
+		if (0 <= bottom && top < bottom - Integer.MAX_VALUE ||
+			top < 0 && top + Integer.MAX_VALUE < bottom)
+			throw new IllegalArgumentException("height too large");
+		return new Extent(left, top, right - left, bottom - top);
+	}
 	
 	/**
-	 * Returns a new extent that has the given left coordinate and the same right, top, and bottom coordinate as this extent.
+	 * Returns an object that has the given left coordinate and the same
+	 * right, top, and bottom coordinate as this object.
 	 * 
-	 * @creates | result
-	 * 
-	 * @throws IllegalArgumentException if {@code newLeft} is not smaller than {@code right}.
-	 * 		| newLeft >= getRight()
+	 * @throws IllegalArgumentException if the given left coordinate is not less than this extent's right coordinate
+	 *    | getRight() <= newLeft
+	 * @throws IllegalArgumentException if the width of the resulting extent is greater than {@code Integer.MAX_VALUE}
+	 *    | 0 <= getRight() && newLeft < getRight() - Integer.MAX_VALUE ||
+	 *    | newLeft < 0 && newLeft + Integer.MAX_VALUE < getRight()
+	 * @post | result != null
+	 * @post | result.getLeft() == newLeft
+	 * @post | result.getTop() == getTop()
+	 * @post | result.getRight() == getRight()
+	 * @post | result.getBottom() == getBottom()
 	 */
 	public Extent withLeft(int newLeft) {
-		if (!(newLeft < right)) {
-			throw new IllegalArgumentException("The given leftside is larger than or equals the right side of this extent.");
-		}
-		
-		return new Extent(newLeft, top, right, bottom);
+		if (getRight() <= newLeft)
+			throw new IllegalArgumentException("newLeft not less than getRight()");
+		if (0 <= getRight() && newLeft < getRight() - Integer.MAX_VALUE ||
+			newLeft < 0 && newLeft + Integer.MAX_VALUE < getRight())
+			throw new IllegalArgumentException("width too large");
+		return new Extent(newLeft, top, right - newLeft, bottom - top);
 	}
+
 	/**
-	 * Returns a new extent that has the given top coordinate and the same left, right, and bottom coordinate as this extent.
+	 * Returns an object that has the given top coordinate and the same
+	 * left, right, and bottom coordinate as this object.
 	 * 
-	 * @creates | this
-	 * 
-	 * @throws IllegalArgumentException if {@code newTop} is not smaller than {@code bottom}.
-	 * 		| newTop >= getBottom()
+	 * @throws IllegalArgumentException if the given left coordinate is not less than this extent's right coordinate
+	 *    | getBottom() <= newTop
+	 * @throws IllegalArgumentException if the width of the resulting extent is greater than {@code Integer.MAX_VALUE}
+	 *    | 0 <= getBottom() && newTop < getBottom() - Integer.MAX_VALUE ||
+	 *    | newTop < 0 && newTop + Integer.MAX_VALUE < getBottom()
+	 * @post | result != null
+	 * @post | result.getLeft() == getLeft()
+	 * @post | result.getTop() == newTop
+	 * @post | result.getRight() == getRight()
+	 * @post | result.getBottom() == getBottom()
 	 */
 	public Extent withTop(int newTop) {
-		if (!(newTop < bottom)) {
-			throw new IllegalArgumentException("The given top side is larger than or equals the bottom side of this extent.");
-		}
-			return new Extent(left, newTop, right, bottom);
+		if (getBottom() <= newTop)
+			throw new IllegalArgumentException("newLeft not less than getRight()");
+		if (0 <= getBottom() && newTop < getBottom() - Integer.MAX_VALUE ||
+			newTop < 0 && newTop + Integer.MAX_VALUE < getBottom())
+			throw new IllegalArgumentException("width too large");
+		return new Extent(left, newTop, right - left, bottom - newTop);
 	}
-	
+
 	/**
-	 * Returns a new extent that has the given right coordinate and the same left, top, and bottom coordinate as this extent.
+	 * Returns an object that has the given right coordinate and the same
+	 * left, top, and bottom coordinate as this object.
 	 * 
-	 * @creates | result
-	 * 
-	 * @throws IllegalArgumentException if {@code newRight} is not greater than {@code left}.
-	 * 		| newRight <= getLeft()
-	 */	
+	 * @throws IllegalArgumentException if the given left coordinate is not less than this extent's right coordinate
+	 *    | newRight <= getLeft()
+	 * @throws IllegalArgumentException if the width of the resulting extent is greater than {@code Integer.MAX_VALUE}
+	 *    | 0 <= newRight && getLeft() < newRight - Integer.MAX_VALUE ||
+	 *    | getLeft() < 0 && getLeft() + Integer.MAX_VALUE < newRight
+	 * @post | result != null
+	 * @post | result.getLeft() == getLeft()
+	 * @post | result.getTop() == getTop()
+	 * @post | result.getRight() == newRight
+	 * @post | result.getBottom() == getBottom()
+	 */
 	public Extent withRight(int newRight) {
-		if (!(newRight > left)) {
-			throw new IllegalArgumentException("The given right side is smaller than or equals the left side of this extent.");
-		}
-			return new Extent(left, top, newRight, bottom);
-
+		if (newRight <= getLeft())
+			throw new IllegalArgumentException("newLeft not less than getRight()");
+		if (0 <= newRight && getLeft() < newRight - Integer.MAX_VALUE ||
+			newRight < 0 && getLeft() + Integer.MAX_VALUE < newRight)
+			throw new IllegalArgumentException("width too large");
+		return new Extent(left, top, newRight - left, bottom - top);
 	}
 	
 	/**
-	 * Returns a new extent that has the given bottom coordinate and the same left, top, and right coordinate as this extent.
+	 * Returns an object that has the given bottom coordinate and the same
+	 * left, top, and right coordinate as this object.
 	 * 
-	 * @creates | result
-	 * 
-	 * @throws IllegalArgumentException if {@code newBottom} is not greater than {@code top}.
-	 * 		| newBottom <= getTop()
-	 */	
+	 * @throws IllegalArgumentException if the given left coordinate is not less than this extent's right coordinate
+	 *    | newBottom <= getTop()
+	 * @throws IllegalArgumentException if the width of the resulting extent is greater than {@code Integer.MAX_VALUE}
+	 *    | 0 <= newBottom && getTop() < newBottom - Integer.MAX_VALUE ||
+	 *    | getTop() < 0 && getTop() + Integer.MAX_VALUE < newBottom
+	 * @post | result != null
+	 * @post | result.getLeft() == getLeft()
+	 * @post | result.getTop() == getTop()
+	 * @post | result.getRight() == getRight()
+	 * @post | result.getBottom() == newBottom
+	 */
 	public Extent withBottom(int newBottom) {
-		if (!(newBottom > top)) {
-			throw new IllegalArgumentException("The given bottom side is larger than or equals the top side of this extent.");
-		}
-			return new Extent(left, top, right, newBottom);
-
+		if (newBottom <= getTop())
+			throw new IllegalArgumentException("newLeft not less than getRight()");
+		if (0 <= newBottom && getTop() < newBottom - Integer.MAX_VALUE ||
+			getTop() < 0 && getTop() + Integer.MAX_VALUE < newBottom)
+			throw new IllegalArgumentException("width too large");
+		return new Extent(left, top, right - left, newBottom - top);
 	}
 	
 	/**
-	 * Returns a new extent that has the given width and the same left, top, and bottom coordinate as this extent.
+	 * Returns an object that has the given width and the same left, top,
+	 * and bottom coordinate as this object.
 	 * 
-	 * @creates | result
-	 * 
-	 * @throws IllegalArgumentException if {@code newWidth} is not greater than zero.
-	 * 		| newWidth <= 0
-	 */	
+	 * @throws IllegalArgumentException if the given width is not positive
+	 *    | newWidth <= 0
+	 * @throws IllegalArgumentException if the new right coordinate would be greater than {@code Integer.MAX_VALUE}
+	 *    | Integer.MAX_VALUE - newWidth < getLeft()
+	 * @post | result != null
+	 * @post | result.getLeft() == getLeft()
+	 * @post | result.getTop() == getTop()
+	 * @post | result.getWidth() == newWidth
+	 * @post | result.getHeight() == getHeight()
+	 */
 	public Extent withWidth(int newWidth) {
-		if (!(newWidth > 0)) {
-			throw new IllegalArgumentException("The given width is not larger than 0.");
-		}
-		return new Extent(left, top, left + newWidth, bottom);
+		if (newWidth <= 0)
+			throw new IllegalArgumentException("newWidth not positive");
+		if (Integer.MAX_VALUE - newWidth < getLeft())
+			throw new IllegalArgumentException("new right coordinate would be greater than Integer.MAX_VALUE");
+		return new Extent(left, top, newWidth, bottom - top);
 	}
 	
 	/**
-	 * Returns a new extent that has the given height and the same left, top, and right coordinate as this extent.
+	 * Returns an object that has the given height and the same left, top,
+	 * and right coordinate as this object.
 	 * 
-	 * @creates | result
-	 * 
-	 * @throws IllegalArgumentException if {@code newHeight} is not greater than zero.
-	 * 		| newHeight <= 0
+	 * @throws IllegalArgumentException if the given height is not positive
+	 *    | newHeight <= 0
+	 * @throws IllegalArgumentException if the new bottom coordinate would be greater than {@code Integer.MAX_VALUE}
+	 *    | Integer.MAX_VALUE - newHeight < getTop()
+	 * @post | result != null
+	 * @post | result.getLeft() == getLeft()
+	 * @post | result.getTop() == getTop()
+	 * @post | result.getWidth() == getWidth()
+	 * @post | result.getHeight() == newHeight
 	 */
 	public Extent withHeight(int newHeight) {
-		if (!(newHeight > 0)) {
-			throw new IllegalArgumentException("The given height is not larger than 0.");
-		}
-		return new Extent(left, top, right, top + newHeight);
+		if (newHeight <= 0)
+			throw new IllegalArgumentException("newHeight not positive");
+		if (Integer.MAX_VALUE - newHeight < getTop())
+			throw new IllegalArgumentException("new bottom coordinate would be greater than Integer.MAX_VALUE");
+		return new Extent(left, top, right - left, newHeight);
 	}
+	
+	 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }
