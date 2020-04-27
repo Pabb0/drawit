@@ -20,8 +20,8 @@ public class RoundedPolygonShape implements Shape{
 		return polygon;
 	}
 	
-	public boolean contains(IntPoint p) {
-		return polygon.contains(p);
+	public boolean contains(IntPoint point) {
+		return polygon.contains(point);
 	}
 	
 	public String getDrawingCommands() {
@@ -53,7 +53,6 @@ public class RoundedPolygonShape implements Shape{
 		return parent.toGlobalCoordinates(point);
 	}
 	
-	
 	public ControlPoint[] createControlPoints() {
 		final IntPoint[] vertices = polygon.getVertices();
 		
@@ -80,14 +79,10 @@ public class RoundedPolygonShape implements Shape{
 					delta = RoundedPolygonShape.this.toShapeCoordinates(delta);
 					vertices[index] = vertex.plus(delta);
 					RoundedPolygonShape.this.polygon.setVertices(vertices);
-					
-					
 				}
-				
 			};
 		}
-		return controlPoints;
-			
+		return controlPoints;	
 	}
 }
 

@@ -21,41 +21,39 @@ public class ShapeGroupShape implements Shape{
 		return group.getParentGroup();
 	}
 	
-	public boolean contains(IntPoint p) {
-		return group.getExtent().contains(p);
+	public boolean contains(IntPoint point) {
+		return group.getExtent().contains(point);
 	}
 	
 	public String getDrawingCommands() {
 		return group.getDrawingCommands();
 	}
 	
-	public IntPoint toShapeCoordinates(IntPoint p) {
+	public IntPoint toShapeCoordinates(IntPoint point) {
 		if (group.getParentGroup() == null) {
-			return p;
+			return point;
 		}
-		return group.getParentGroup().toInnerCoordinates(p);
+		return group.getParentGroup().toInnerCoordinates(point);
 	}
 	
-	public IntVector toShapeCoordinates(IntVector v) {
+	public IntVector toShapeCoordinates(IntVector vector) {
 		if (group.getParentGroup() == null) {
-			return v;
+			return vector;
 		}
-		return group.getParentGroup().toInnerCoordinates(v);
+		return group.getParentGroup().toInnerCoordinates(vector);
 	}
 	
-	public IntPoint toGlobalCoordinates(IntPoint p) {
+	public IntPoint toGlobalCoordinates(IntPoint point) {
 		if (group.getParentGroup() == null) {
-			return p;
+			return point;
 		}
-		return group.getParentGroup().toGlobalCoordinates(p);
+		return group.getParentGroup().toGlobalCoordinates(point);
 	}
 
-	
 	public ControlPoint[] createControlPoints() {
 		final Extent extent = this.group.getExtent();
 		
 		return new ControlPoint[] {
-		
 			new ControlPoint(){
 				@Override
 				public IntPoint getLocation() {
@@ -75,7 +73,6 @@ public class ShapeGroupShape implements Shape{
 							extent.getBottom()));
 					}
 				},
-				
 			new ControlPoint() {
 				@Override
 				public IntPoint getLocation() {
@@ -96,10 +93,6 @@ public class ShapeGroupShape implements Shape{
 				}
 			}
 		};
-			
-
-		
 	}
-
 
 }

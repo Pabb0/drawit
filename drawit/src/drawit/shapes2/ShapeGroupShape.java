@@ -21,8 +21,8 @@ public class ShapeGroupShape implements Shape{
 		return group.getParentGroup();
 	}
 	
-	public boolean contains(IntPoint p) {
-		return group.getExtent().contains(p);
+	public boolean contains(IntPoint point) {
+		return group.getExtent().contains(point);
 	}
 	
 	public String getDrawingCommands() {
@@ -50,12 +50,10 @@ public class ShapeGroupShape implements Shape{
 		return group.getParentGroup().toGlobalCoordinates(point);
 	}
 
-	
 	public ControlPoint[] createControlPoints() {
 		final Extent extent = this.group.getExtent();
 		
 		return new ControlPoint[] {
-		
 			new ControlPoint(){
 				@Override
 				public IntPoint getLocation() {
@@ -75,7 +73,6 @@ public class ShapeGroupShape implements Shape{
 							extent.getBottom()));
 					}
 				},
-				
 			new ControlPoint() {
 				@Override
 				public IntPoint getLocation() {
@@ -96,10 +93,6 @@ public class ShapeGroupShape implements Shape{
 				}
 			}
 		};
-			
-
-		
 	}
-
 
 }

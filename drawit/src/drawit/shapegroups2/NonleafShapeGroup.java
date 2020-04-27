@@ -13,8 +13,6 @@ import drawit.IntPoint;
 import logicalcollections.LogicalList;
 
 
-
-
 public class NonleafShapeGroup extends ShapeGroup{
 	/**
 	 * @invar | firstChild.parent == this
@@ -22,6 +20,7 @@ public class NonleafShapeGroup extends ShapeGroup{
 	 * @peerObject
 	 */
 	ShapeGroup firstChild;
+	
 	
 	List<ShapeGroup> getSubgroupsPrivate() {
 		if (firstChild == null)
@@ -94,7 +93,6 @@ public class NonleafShapeGroup extends ShapeGroup{
 	public List<RoundedPolygon> getAllShapes() {
 		return getSubgroups().stream().flatMap(subgroup -> subgroup.getAllShapes().stream()).collect(Collectors.toList());
 	}
-	
 	
 	/**
 	 * Return the first subgroup in this non-leaf shape group's list of subgroups whose
