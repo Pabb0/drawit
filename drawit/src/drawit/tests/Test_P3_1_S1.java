@@ -10,12 +10,10 @@ import drawit.shapegroups1.*;
 
 
 
-class TestFile {
+class Test_P3_1_S1 {
 
 	@Test
 	void test() {
-		System.out.println("DEEL 3 - PART 1 - DRAWIT1");
-
 		IntPoint iPoint1 = new IntPoint(100, 100);
 		IntPoint iPoint2 = new IntPoint(200, 100);
 		IntPoint iPoint3 = new IntPoint(200, 200);

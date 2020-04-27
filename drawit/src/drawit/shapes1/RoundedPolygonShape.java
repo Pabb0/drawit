@@ -1,11 +1,16 @@
 package drawit.shapes1;
 
+import drawit.IntPoint;
+import drawit.IntVector;
+import drawit.RoundedPolygon;
+import drawit.shapegroups1.ShapeGroup;
+
 public class RoundedPolygonShape implements Shape{
 	
-	private drawit.shapegroups1.ShapeGroup parent;
-	private drawit.RoundedPolygon polygon;
+	private final ShapeGroup parent;
+	private final RoundedPolygon polygon;
 
-	public RoundedPolygonShape(drawit.shapegroups1.ShapeGroup parent, drawit.RoundedPolygon polygon) {
+	public RoundedPolygonShape(ShapeGroup parent, RoundedPolygon polygon) {
 		this.parent = parent;
 		this.polygon = polygon;
 		
@@ -15,7 +20,7 @@ public class RoundedPolygonShape implements Shape{
 		return polygon;
 	}
 	
-	public boolean contains(drawit.IntPoint p) {
+	public boolean contains(IntPoint p) {
 		return polygon.contains(p);
 	}
 	
@@ -23,25 +28,67 @@ public class RoundedPolygonShape implements Shape{
 		return polygon.getDrawingCommands();
 	}
 	
-	public drawit.shapegroups1.ShapeGroup getParent() {
+	public ShapeGroup getParent() {
 		return parent;
 	}
-	
-	// Wat als parent == null?
-	// Wat zijn ShapeCoordinates precies (inner of outer)
-	public drawit.IntPoint toShapeCoordinates(drawit.IntPoint p) {
-		return parent.toInnerCoordinates(p);
+
+	public IntPoint toShapeCoordinates(IntPoint point) {
+		if (parent == null) {
+			return point;
+		}
+		return parent.toInnerCoordinates(point);
 	}
 	
-	// Wat als parent == null?
-	// Wat zijn ShapeCoordinates precies (inner of outer)
-	public drawit.IntPoint toGlobalCoordinates(drawit.IntPoint p) {
-		return parent.toGlobalCoordinates(p);
+	public IntVector toShapeCoordinates(IntVector vector) {
+		if (parent == null) {
+			return vector;
+		}
+		return parent.toInnerCoordinates(vector);
 	}
+	
+	public IntPoint toGlobalCoordinates(IntPoint point) {
+		if (parent == null) {
+			return point;
+		}
+		return parent.toGlobalCoordinates(point);
+	}
+	
 	
 	public ControlPoint[] createControlPoints() {
-		return null;
+		final IntPoint[] vertices = polygon.getVertices();
+		
+		ControlPoint[] controlPoints = new ControlPoint[vertices.length];
+		for (int i = 0; i < vertices.length; i++) {
+			int index = i;
+			IntPoint vertex = polygon.getVertices()[i];
+			
+			controlPoints[i] = new ControlPoint() {
+
+				@Override
+				public IntPoint getLocation() {
+					return vertex;
+				}
+
+				@Override
+				public void remove() {
+					RoundedPolygonShape.this.polygon.remove(index);
+					
+				}
+
+				@Override
+				public void move(IntVector delta) {
+					delta = RoundedPolygonShape.this.toShapeCoordinates(delta);
+					vertices[index] = vertex.plus(delta);
+					RoundedPolygonShape.this.polygon.setVertices(vertices);
+					
+					
+				}
+				
+			};
+		}
+		return controlPoints;
+			
 	}
-	
 }
+
 

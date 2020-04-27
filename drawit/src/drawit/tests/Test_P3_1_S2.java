@@ -11,11 +11,10 @@ import drawit.shapegroups2.LeafShapeGroup;
 import drawit.shapegroups2.NonleafShapeGroup;
 import drawit.shapegroups2.ShapeGroup;
 
-class TestFile2 {
+class Test_P3_1_S2 {
 
 	@Test
 	void test() {
-		System.out.println("DEEL 3 - PART 1 - DRAWIT2");
 		IntPoint iPoint1 = new IntPoint(100, 100);
 		IntPoint iPoint2 = new IntPoint(200, 100);
 		IntPoint iPoint3 = new IntPoint(200, 200);

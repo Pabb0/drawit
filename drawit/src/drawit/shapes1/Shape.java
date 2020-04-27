@@ -1,16 +1,19 @@
 package drawit.shapes1;
 
+import drawit.IntPoint;
+import drawit.shapegroups1.ShapeGroup;
+
 public interface Shape {
 	
-	drawit.shapegroups1.ShapeGroup getParent();
+	ShapeGroup getParent();
 	
 	boolean contains(drawit.IntPoint p);
 	
 	String getDrawingCommands();
 	
-	drawit.IntPoint toShapeCoordinates(drawit.IntPoint p);
+	IntPoint toShapeCoordinates(drawit.IntPoint p);
 	
-	drawit.IntPoint toGlobalCoordinates(drawit.IntPoint p);
+	IntPoint toGlobalCoordinates(drawit.IntPoint p);
 	
 	ControlPoint[] createControlPoints();
 }

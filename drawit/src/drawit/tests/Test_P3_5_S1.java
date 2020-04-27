@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 
 import drawit.shapegroups1.Extent;
 
-class TestFile5_2 {
+class Test_P3_5_S1 {
 
 	@Test
 	void test() {
-		System.out.println("DEEL 3 - PART 5 - DRAWIT2");
+		System.out.println("DEEL 3 - PART 5 - DRAWIT1");
 		
 		Object e1 = Extent.ofLeftTopRightBottom(0, 0, 100, 100);
 		Object e2 = Extent.ofLeftTopRightBottom(0, 0, 100, 100);

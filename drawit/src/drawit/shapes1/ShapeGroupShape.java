@@ -1,27 +1,27 @@
 package drawit.shapes1;
 
-public class ShapeGroupShape {
+import drawit.IntPoint;
+import drawit.IntVector;
+import drawit.shapegroups1.Extent;
+import drawit.shapegroups1.ShapeGroup;
+
+public class ShapeGroupShape implements Shape{
 	
-	private drawit.shapegroups1.ShapeGroup group;
+	private ShapeGroup group;
 	
-	public ShapeGroupShape(drawit.shapegroups1.ShapeGroup group) {
+	public ShapeGroupShape(ShapeGroup group) {
 		this.group = group;
 	}
 	
-	public drawit.shapegroups1.ShapeGroup getShapeGroup() {
+	public ShapeGroup getShapeGroup() {
 		return group;
 	}
 	
-	// Kan eig gewoon met een return
-	public drawit.shapegroups1.ShapeGroup getParent() {
-		if (group.getParentGroup() != null) {
-			return group.getParentGroup();
-		} else {
-			return null;
-		}
+	public ShapeGroup getParent() {
+		return group.getParentGroup();
 	}
 	
-	public boolean contains(drawit.IntPoint p) {
+	public boolean contains(IntPoint p) {
 		return group.getExtent().contains(p);
 	}
 	
@@ -29,16 +29,76 @@ public class ShapeGroupShape {
 		return group.getDrawingCommands();
 	}
 	
-	public drawit.IntPoint toShapeCoordinates(drawit.IntPoint p) {
-		return group.toInnerCoordinates(p);
+	public IntPoint toShapeCoordinates(IntPoint p) {
+		if (group.getParentGroup() == null) {
+			return p;
+		}
+		return group.getParentGroup().toInnerCoordinates(p);
 	}
 	
-	public drawit.IntPoint toGlobalCoordinates(drawit.IntPoint p) {
-		return group.outerToGlobalCoordinates(p);
+	public IntVector toShapeCoordinates(IntVector v) {
+		if (group.getParentGroup() == null) {
+			return v;
+		}
+		return group.getParentGroup().toInnerCoordinates(v);
 	}
+	
+	public IntPoint toGlobalCoordinates(IntPoint p) {
+		if (group.getParentGroup() == null) {
+			return p;
+		}
+		return group.getParentGroup().toGlobalCoordinates(p);
+	}
+
 	
 	public ControlPoint[] createControlPoints() {
-		return null;
+		final Extent extent = this.group.getExtent();
+		
+		return new ControlPoint[] {
+		
+			new ControlPoint(){
+				@Override
+				public IntPoint getLocation() {
+					return extent.getTopLeft();
+				}
+	
+				@Override
+				public void remove() {}
+	
+				@Override
+				public void move(IntVector delta) {
+					delta = ShapeGroupShape.this.toShapeCoordinates(delta);
+					ShapeGroupShape.this.group.setExtent(Extent.ofLeftTopRightBottom(
+							extent.getLeft() + delta.getX(), 
+							extent.getTop() + delta.getY(), 
+							extent.getRight(), 
+							extent.getBottom()));
+					}
+				},
+				
+			new ControlPoint() {
+				@Override
+				public IntPoint getLocation() {
+					return extent.getBottomRight();
+				}
+	
+				@Override
+				public void remove() {}
+	
+				@Override
+				public void move(IntVector delta) {
+					delta = ShapeGroupShape.this.toShapeCoordinates(delta);
+					ShapeGroupShape.this.group.setExtent(Extent.ofLeftTopRightBottom(
+							extent.getLeft(), 
+							extent.getTop(), 
+							extent.getRight() + delta.getX(), 
+							extent.getBottom() + delta.getY()));
+				}
+			}
+		};
+			
+
+		
 	}
 
 

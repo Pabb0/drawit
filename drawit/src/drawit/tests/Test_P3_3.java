@@ -13,7 +13,7 @@ import drawit.shapegroups1.NonleafShapeGroup;
 import drawit.shapegroups1.ShapeGroup;
 import drawit.shapegroups1.exporter.ShapeGroupExporter;
 
-class TestFile_3_2_Exporter {
+class Test_P3_3 {
 
 	@Test
 	void test() {
@@ -51,42 +51,41 @@ class TestFile_3_2_Exporter {
 	    ShapeGroup shape5 = new NonleafShapeGroup(shape1And2And3);
 	    
 	    
-	    Object test1 = ShapeGroupExporter.toPlainData(shape4);
-	    System.out.println(test1);
-	    
-	    
-	    
-	    
-	    RoundedPolygon p4 = new RoundedPolygon();
-	    IntPoint[] po4 = {new IntPoint(30,40), new IntPoint(60,190), new IntPoint(90, 150)};
-	    p4.setVertices(po4);
-	    p4.setRadius(5);
-	    
-	    RoundedPolygon p5 = new RoundedPolygon();
-	    IntPoint[] po5 = {new IntPoint(35,45), new IntPoint(95,95), new IntPoint(50, 195)};
-	    p5.setVertices(po5);
-	    p5.setRadius(7);
-	    
-	    
-	    ShapeGroup s4 = new LeafShapeGroup(p4);
-	    ShapeGroup s5 = new LeafShapeGroup(p5);
-	    
-	    s4.setExtent(Extent.ofLeftTopRightBottom(10, 20, 15, 132));
-	    s5.setExtent(Extent.ofLeftTopRightBottom(15, 22, 100, 200));
+	    System.out.println(ShapeGroupExporter.toPlainData(shape5));
 
 	    
-	    ShapeGroup[] s45 = {s4, s5};
 	    
-	    ShapeGroup s6 = new NonleafShapeGroup(s45);
 	    
-	    s4.setExtent(Extent.ofLeftTopRightBottom(40, 50, 60, 70));
-	    s5.setExtent(Extent.ofLeftTopRightBottom(45, 55, 65, 75));
-	    s6.setExtent(Extent.ofLeftTopRightBottom(5, 7, 99, 88));
+	    RoundedPolygon polygon4 = new RoundedPolygon();
+	    IntPoint[] iPointArray4 = {new IntPoint(30,40), new IntPoint(60,190), new IntPoint(90, 150)};
+	    polygon4.setVertices(iPointArray4);
+	    polygon4.setRadius(5);
 	    
-	    ShapeGroup[] shape56 = {shape5, s6};
+	    RoundedPolygon polygon5 = new RoundedPolygon();
+	    IntPoint[] iPointArray5 = {new IntPoint(35,45), new IntPoint(95,95), new IntPoint(50, 195)};
+	    polygon5.setVertices(iPointArray5);
+	    polygon5.setRadius(7);
 	    
-	    ShapeGroup s6_45 = new NonleafShapeGroup(shape56);
-	    System.out.println(ShapeGroupExporter.toPlainData(s6_45));
+	    
+	    ShapeGroup shape6 = new LeafShapeGroup(polygon4);
+	    ShapeGroup shape7 = new LeafShapeGroup(polygon5);
+	    
+	    shape6.setExtent(Extent.ofLeftTopRightBottom(10, 20, 15, 132));
+	    shape7.setExtent(Extent.ofLeftTopRightBottom(15, 22, 100, 200));
+
+	    
+	    ShapeGroup[] shape6And7 = {shape6, shape7};
+	    
+	    ShapeGroup shape8 = new NonleafShapeGroup(shape6And7);
+	    
+	    shape6.setExtent(Extent.ofLeftTopRightBottom(40, 50, 60, 70));
+	    shape7.setExtent(Extent.ofLeftTopRightBottom(45, 55, 65, 75));
+	    shape8.setExtent(Extent.ofLeftTopRightBottom(5, 7, 99, 88));
+	    
+	    ShapeGroup[] shape5And8 = {shape5, shape8};
+	    
+	    ShapeGroup shape9 = new NonleafShapeGroup(shape5And8);
+	    System.out.println(ShapeGroupExporter.toPlainData(shape9));
 	    
 
 	    

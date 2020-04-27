@@ -3,6 +3,8 @@ package drawit;
 import java.awt.Color;
 import java.util.Arrays;
 
+import drawit.shapegroups1.Extent;
+
 /**
  * An instance of this class is a mutable abstraction storing a rounded polygon defined by a set of 2D points with integer coordinates
  * and a nonnegative corner radius.
@@ -11,6 +13,7 @@ import java.util.Arrays;
  * @invar | Arrays.stream(getVertices()).allMatch(v -> v != null)
  * @invar | PointArrays.checkDefinesProperPolygon(getVertices()) == null
  * @invar | 0 <= getRadius()
+ * @invar | getExtent() == null || Arrays.stream(getVertices()).allMatch(v -> getExtent().contains(v))
  */
 public class RoundedPolygon {
 	
@@ -20,10 +23,12 @@ public class RoundedPolygon {
 	 * @invar | Arrays.stream(vertices).allMatch(v -> v != null)
 	 * @invar | PointArrays.checkDefinesProperPolygon(vertices) == null
 	 * @invar | 0 <= radius
+	 * @invar | extent == null || Arrays.stream(vertices).allMatch(v -> extent.contains(v))
 	 */
 	private IntPoint[] vertices = new IntPoint[0];
 	private int radius;
 	private Color color = Color.yellow;
+	private Extent extent;
 	
 	/**
 	 * Returns a new array whose elements are the vertices of this rounded polygon.
@@ -32,6 +37,13 @@ public class RoundedPolygon {
 	 */
 	public IntPoint[] getVertices() {
 		return PointArrays.copy(vertices);
+	}
+	
+	/**
+	 * Returns the extent of this rounded polygon its vertices.
+	 */
+	public Extent getExtent() {
+		return extent;
 	}
 	
 	/**
@@ -70,8 +82,27 @@ public class RoundedPolygon {
 		if (msg != null)
 			throw new IllegalArgumentException(msg);
 		vertices = copy;
+		
+		setExtent();
 	}
 	
+	private void setExtent() {
+		int left = Integer.MAX_VALUE;
+		int top = Integer.MAX_VALUE;
+		int right = Integer.MIN_VALUE;
+		int bottom = Integer.MIN_VALUE;
+		
+		for (int i = 0; i < vertices.length; i++) {
+			IntPoint vertex = vertices[i];
+			left = Math.min(left, vertex.getX());
+			right = Math.max(right, vertex.getX());
+			top = Math.min(top, vertex.getY());
+			bottom = Math.max(bottom, vertex.getY());
+		}
+		extent = Extent.ofLeftTopRightBottom(left, top, right, bottom);
+		
+	}
+
 	/**
 	 * Sets this rounded polygon's corner radius to the given value. 
 	 * 
@@ -322,5 +353,6 @@ public class RoundedPolygon {
 		commands.append("fill " + color.getRed() + " " + color.getGreen() + " " + color.getBlue() + "\n");
 		return commands.toString();
 	}
+
 	
 }

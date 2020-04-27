@@ -1,5 +1,16 @@
 package drawit.shapes2;
 
-public interface ControlPoint {
+import drawit.IntPoint;
+import drawit.IntVector;
 
+public interface ControlPoint {
+	
+	
+	IntPoint getLocation();
+	
+	void remove();
+	
+	void move(IntVector delta);
+	
+	
 }
