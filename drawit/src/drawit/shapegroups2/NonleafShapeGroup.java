@@ -13,10 +13,10 @@ import drawit.IntPoint;
 import logicalcollections.LogicalList;
 
 
-public class NonleafShapeGroup extends ShapeGroup{
+public class NonleafShapeGroup extends ShapeGroup {
 	/**
-	 * @invar | firstChild.parent == this
 	 * @invar | firstChild != null
+	 * @invar | firstChild.parent == this
 	 * @peerObject
 	 */
 	ShapeGroup firstChild;
@@ -47,14 +47,9 @@ public class NonleafShapeGroup extends ShapeGroup{
 	/**
 	 * Returns the number of subgroups of this non-leaf shape group.
 	 * 
-	 * @throws UnsupportedOperationException if this is a leaf shape group
-	 *    | getSubgroups() == null
 	 * @post | result == getSubgroups().size()
 	 */
 	public int getSubgroupCount() {
-		if (firstChild == null)
-			throw new UnsupportedOperationException();
-		
 		ShapeGroup child = firstChild;
 		int count = 1;
 		for (;;) {
@@ -69,15 +64,11 @@ public class NonleafShapeGroup extends ShapeGroup{
 	/**
 	 * Returns the subgroup at the given (zero-based) index in this non-leaf shape group's list of subgroups.
 	 * 
-	 * @throws UnsupportedOperationException if this is a leaf shape group
-	 *    | getSubgroups() == null
 	 * @throws IllegalArgumentException if the given index is out of bounds
 	 *    | index < 0 || getSubgroups().size() <= index
 	 * @post | result == getSubgroups().get(index)
 	 */
 	public ShapeGroup getSubgroup(int index) {
-		if (firstChild == null)
-			throw new UnsupportedOperationException();
 		if (index < 0 || getSubgroupCount() <= index)
 			throw new IllegalArgumentException("index out of bounds");
 		
@@ -98,8 +89,6 @@ public class NonleafShapeGroup extends ShapeGroup{
 	 * Return the first subgroup in this non-leaf shape group's list of subgroups whose
 	 * extent contains the given point, expressed in this shape group's inner coordinate system.
 	 * 
-	 * @throws UnsupportedOperationException if this shape group is a leaf shape group
-	 *    | getSubgroups() == null
 	 * @throws IllegalArgumentException if {@code innerCoordinates} is null
 	 *    | innerCoordinates == null
 	 * @post
@@ -108,8 +97,6 @@ public class NonleafShapeGroup extends ShapeGroup{
 	 *    |         .findFirst().orElse(null))
 	 */
 	public ShapeGroup getSubgroupAt(IntPoint innerCoordinates) {
-		if (firstChild == null)
-			throw new UnsupportedOperationException("this is a leaf shape group");
 		if (innerCoordinates == null)
 			throw new IllegalArgumentException("innerCoordinates is null");
 		

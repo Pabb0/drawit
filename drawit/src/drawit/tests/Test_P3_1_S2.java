@@ -2,6 +2,8 @@ package drawit.tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 import drawit.IntPoint;
@@ -116,6 +118,145 @@ class Test_P3_1_S2 {
 	    assert shape1.getOriginalExtent().getRight() == 200;
 	    assert shape1.getOriginalExtent().getBottom() == 200;
 	    
+	    IntPoint iPoint9 = new IntPoint(100, 100);
+		IntPoint iPoint10 = new IntPoint(200, 100);
+		IntPoint iPoint11 = new IntPoint(200, 200);
+		IntPoint iPoint12 = new IntPoint(100, 200);
+		IntPoint iPoint13 = new IntPoint(150, 150);
+		IntPoint iPoint14 = new IntPoint(175, 125);
+		
+		IntPoint[] iPointArray4 = {iPoint9, iPoint10, iPoint11, iPoint12};
+		IntPoint[] iPointArray5 = {iPoint9, iPoint14, iPoint13, iPoint11, iPoint12};
+
+	    RoundedPolygon polygon4 = new RoundedPolygon();
+	    polygon4.setVertices(iPointArray4);
+	    polygon4.setRadius(25);
+	    
+	    RoundedPolygon polygon5 = new RoundedPolygon();
+	    polygon5.setVertices(iPointArray5);
+	    polygon5.setRadius(10);
+	    
+	    
+	    ShapeGroup shapeGroup1 = new LeafShapeGroup(polygon4);
+	    shapeGroup1.setExtent(Extent.ofLeftTopRightBottom(0, 0, 100, 100));
+	    assert shapeGroup1.getExtent().getTop() == 0;
+	    assert shapeGroup1.getExtent().getLeft() == 0;
+	    assert shapeGroup1.getExtent().getRight() == 100;
+	    assert shapeGroup1.getExtent().getBottom() == 100;
+	    assert shapeGroup1.getOriginalExtent().getTop() == 100;
+	    assert shapeGroup1.getOriginalExtent().getLeft() == 100;
+	    assert shapeGroup1.getOriginalExtent().getRight() == 200;
+	    assert shapeGroup1.getOriginalExtent().getBottom() == 200;
+	    shapeGroup1.setExtent(Extent.ofLeftTopRightBottom(100, 100, 200, 200));
+
+	    ShapeGroup shapeGroup2 = new LeafShapeGroup(polygon5);
+	    ShapeGroup[] shapeGroup1And2 = {shapeGroup1, shapeGroup2};
+	    ShapeGroup shapeGroup3 = new NonleafShapeGroup(shapeGroup1And2);
+	    
+	    assert shapeGroup1 instanceof LeafShapeGroup;
+	    assert shapeGroup2 instanceof LeafShapeGroup;
+	    assert shapeGroup3 instanceof NonleafShapeGroup;
+
+	    assert ((NonleafShapeGroup) shapeGroup3).getSubgroupCount() == 2;
+	    assertEquals(Arrays.asList(shapeGroup1And2), ((NonleafShapeGroup) shapeGroup3).getSubgroups());
+	    shapeGroup1.bringToFront();
+	    assert ((NonleafShapeGroup) shapeGroup3).getSubgroup(0) == shapeGroup1;
+	    assert ((NonleafShapeGroup) shapeGroup3).getSubgroups().get(1) == shapeGroup2;
+	    shapeGroup2.bringToFront();
+	    assert ((NonleafShapeGroup) shapeGroup3).getSubgroups().get(0) == shapeGroup2;
+	    assert ((NonleafShapeGroup) shapeGroup3).getSubgroups().get(1) == shapeGroup1;
+	    shapeGroup2.sendToBack();
+	    assert ((NonleafShapeGroup) shapeGroup3).getSubgroups().get(0) == shapeGroup1;
+	    assert ((NonleafShapeGroup) shapeGroup3).getSubgroup(1) == shapeGroup2;
+	    shapeGroup1.sendToBack();
+	    assert ((NonleafShapeGroup) shapeGroup3).getSubgroups().get(0) == shapeGroup2;
+	    assert ((NonleafShapeGroup) shapeGroup3).getSubgroups().get(1) == shapeGroup1;
+	    
+	    assert shapeGroup1.getParentGroup() == shapeGroup3;
+	    assert shapeGroup2.getParentGroup() == shapeGroup3;
+	    assert shapeGroup3.getParentGroup() == null;
+	    assert ((LeafShapeGroup) shapeGroup1).getShape() == polygon4;
+	    assert ((LeafShapeGroup) shapeGroup2).getShape() == polygon5;
+	    assert shapeGroup1.getAllShapes().size() == 1;
+	    assert shapeGroup1.getAllShapes().contains(polygon4);
+	    assert shapeGroup2.getAllShapes().size() == 1;
+	    assert shapeGroup2.getAllShapes().contains(polygon5);	    
+	    assert shapeGroup3.getAllShapes().size() == 2;
+	    assert shapeGroup3.getAllShapes().contains(polygon4);	    
+	    assert shapeGroup3.getAllShapes().contains(polygon5);	    
+	    
+	    shapeGroup3.setExtent(Extent.ofLeftTopRightBottom(50, 50, 200, 200));
+	    assert shapeGroup3.getExtent().getTopLeft().equals(new IntPoint(50, 50)) && shapeGroup3.getExtent().getBottomRight().equals(new IntPoint(200, 200));
+	    
+	    
+	    RoundedPolygon triangle = new RoundedPolygon();
+	    triangle.setVertices(new IntPoint[] {new IntPoint(10, 10), new IntPoint(30, 10), new IntPoint(20, 20)});
+
+	    ShapeGroup leaf = new LeafShapeGroup(triangle);
+	    assert leaf instanceof LeafShapeGroup;
+	    assert leaf.getExtent().getTopLeft().equals(new IntPoint(10, 10)) && leaf.getExtent().getBottomRight().equals(new IntPoint(30, 20));
+	    leaf.setExtent(Extent.ofLeftTopWidthHeight(0, 0, 20, 10));
+	    
+	    RoundedPolygon triangle2 = new RoundedPolygon();
+	    triangle2.setVertices(new IntPoint[] {new IntPoint(10, 10), new IntPoint(20, 10), new IntPoint(20, 20)});
+
+	    ShapeGroup leaf2 = new LeafShapeGroup(triangle2);
+	    assert leaf2 instanceof LeafShapeGroup;
+	    assert leaf2.getExtent().getTopLeft().equals(new IntPoint(10, 10)) && leaf2.getExtent().getBottomRight().equals(new IntPoint(20, 20));
+	    leaf2.setExtent(Extent.ofLeftTopWidthHeight(0, 0, 20, 10));
+	    
+
+	    ShapeGroup nonLeaf = new NonleafShapeGroup(new ShapeGroup[] {leaf, leaf2});
+	    assert nonLeaf instanceof NonleafShapeGroup;
+	    assert nonLeaf.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && nonLeaf.getExtent().getBottomRight().equals(new IntPoint(20, 10));
+	    nonLeaf.setExtent(Extent.ofLeftTopWidthHeight(0, 0, 10, 5));
+	    
+	    leaf.setExtent(Extent.ofLeftTopWidthHeight(1000, 2000, 20, 10));
+	    
+	    
+	    assert leaf.toGlobalCoordinates(new IntPoint(10,10)).getX() == 500;
+	    assert leaf.toGlobalCoordinates(new IntPoint(10,10)).getY() == 1000;
+
+	    assert leaf.toInnerCoordinates(new IntPoint(500,1000)).getX() == 10;
+	    assert leaf.toInnerCoordinates(new IntPoint(500,1000)).getY() == 10;
+	    leaf.setExtent(Extent.ofLeftTopWidthHeight(2000, 4000, 40, 20));
+	    
+	    assert leaf.toGlobalCoordinates(new IntPoint(20, 15)).getX() == 1010;
+
+
+	    RoundedPolygon fig = new RoundedPolygon();
+	    fig.setVertices(new IntPoint[] {new IntPoint(0, 0), new IntPoint(20, 10), new IntPoint(20, 30)});
+
+	    ShapeGroup kind = new LeafShapeGroup(fig);
+	    assert kind instanceof LeafShapeGroup;
+	    assert kind.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && kind.getExtent().getBottomRight().equals(new IntPoint(20, 30));
+	    kind.setExtent(Extent.ofLeftTopRightBottom(50, 50, 100, 100));
+	    assert kind.getOriginalExtent().getTopLeft().equals(new IntPoint(0, 0)) && kind.getOriginalExtent().getBottomRight().equals(new IntPoint(20, 30));
+
+	    RoundedPolygon fig2 = new RoundedPolygon();
+	    fig2.setVertices(new IntPoint[] {new IntPoint(5, 5), new IntPoint(10, 10), new IntPoint(5, 10)});
+	    
+	    ShapeGroup kind2 = new LeafShapeGroup(fig2);
+	    assert kind2 instanceof LeafShapeGroup;
+	    assert kind2.getExtent().getTopLeft().equals(new IntPoint(5, 5)) && kind2.getExtent().getBottomRight().equals(new IntPoint(10, 10));
+	    kind2.setExtent(Extent.ofLeftTopRightBottom(50, 50, 100, 100));
+	    assert kind2.getOriginalExtent().getTopLeft().equals(new IntPoint(5, 5)) && kind2.getOriginalExtent().getBottomRight().equals(new IntPoint(10, 10));
+
+	    
+	    ShapeGroup mama = new NonleafShapeGroup(new ShapeGroup[] {kind, kind2});
+	    assert mama instanceof NonleafShapeGroup;
+	    assert kind instanceof LeafShapeGroup;
+	    assert kind2 instanceof LeafShapeGroup;
+	    assert mama.getExtent().getTopLeft().equals(new IntPoint(50, 50)) && mama.getExtent().getBottomRight().equals(new IntPoint(100, 100));
+	    mama.setExtent(Extent.ofLeftTopRightBottom(30, 30, 80, 100));
+	    assert mama.getOriginalExtent().getTopLeft().equals(new IntPoint(50, 50)) && mama.getOriginalExtent().getBottomRight().equals(new IntPoint(100, 100));
+	    kind.setExtent(Extent.ofLeftTopRightBottom(100, 50, 150, 150));
+
+	    assert kind.getOriginalExtent().getTopLeft().equals(new IntPoint(0, 0)) && kind.getOriginalExtent().getBottomRight().equals(new IntPoint(20, 30));
+	    assert kind.getExtent().getTopLeft().equals(new IntPoint(100, 50)) && kind.getExtent().getBottomRight().equals(new IntPoint(150, 150));
+
+	    assert kind.toGlobalCoordinates(new IntPoint(10, 15)).equals(new IntPoint(105, 100)); 
+	    assert kind.toInnerCoordinates(new IntPoint(105, 100)).equals(new IntPoint(10, 15)); 
 	}
 
 }

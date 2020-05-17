@@ -42,9 +42,7 @@ public class RoundedPolygon {
 	/**
 	 * Returns the extent of this rounded polygon its vertices.
 	 */
-	public Extent getExtent() {
-		return extent;
-	}
+	public Extent getExtent() { return extent; }
 	
 	/**
 	 * Returns the radius of the corners of this rounded polygon.
@@ -86,6 +84,18 @@ public class RoundedPolygon {
 		setExtent();
 	}
 	
+	/**
+	 * Sets the extent of this rounded polygon.
+	 * 
+	 * @mutates | this
+	 * @post | Arrays.stream(getVertices()).allMatch(v -> getExtent().contains(v))
+	 * @post The four coordinates defining this polygon its extent are equal to at least one of the coordinates of any of the vertices.
+	 *		 | Arrays.stream(getVertices()).anyMatch(v -> v.getX() == getExtent().getLeft()) &&
+	 * 		 | Arrays.stream(getVertices()).anyMatch(v -> v.getX() == getExtent().getRight()) &&
+	 * 		 | Arrays.stream(getVertices()).anyMatch(v -> v.getY() == getExtent().getBottom()) &&
+	 * 		 | Arrays.stream(getVertices()).anyMatch(v -> v.getY() == getExtent().getTop())
+	 *
+	 */
 	private void setExtent() {
 		int left = Integer.MAX_VALUE;
 		int top = Integer.MAX_VALUE;

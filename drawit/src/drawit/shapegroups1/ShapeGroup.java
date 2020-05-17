@@ -26,7 +26,7 @@ abstract public class ShapeGroup {
 	
 
 	 /**
-	 * @invar | !getAncestorsPrivate().contains(this)
+	 * @invar | !getAncestorsPackage().contains(this)
 	 */
 	
 	/**
@@ -44,15 +44,15 @@ abstract public class ShapeGroup {
 	 * Returns the set of the ancestors of this shape group.
 	 * 
 	 * @post | result != null
-	 * 	@post | result.equals(LogicalSet.<ShapeGroup>matching(ancestors ->
+	 * @post | result.equals(LogicalSet.<ShapeGroup>matching(ancestors ->
 	 *     |     getParentGroup() == null || ancestors.contains(getParentGroup()) &&
 	 *     |     ancestors.allMatch(ancestor -> ancestor.getParentGroup() == null || ancestors.contains(ancestor.getParentGroup()))))
 	 */
 	public Set<ShapeGroup> getAncestors() {
-		return getAncestorsPrivate();
+		return getAncestorsPackage();
 	}
 	
-	Set<ShapeGroup> getAncestorsPrivate() {
+	Set<ShapeGroup> getAncestorsPackage() {
 		return LogicalSet.<ShapeGroup>matching(ancestors ->
 			parent == null || ancestors.contains(parent) &&
 			ancestors.allMatch(ancestor -> ancestor.parent == null || ancestors.contains(ancestor.parent))
@@ -98,7 +98,7 @@ abstract public class ShapeGroup {
 	 * @basic
 	 * @peerObject
 	 */
-	public ShapeGroup getParentGroup() { return parent; }
+	public NonleafShapeGroup getParentGroup() { return parent; }
 
 
 
@@ -349,9 +349,9 @@ abstract public class ShapeGroup {
 		if (parent == null)
 			throw new UnsupportedOperationException("no parent");
 		
-		NonleafShapeGroup papa = (NonleafShapeGroup) parent;
-		papa.subgroups.remove(this);
-		papa.subgroups.add(this);
+//		NonleafShapeGroup papa = (NonleafShapeGroup) parent;
+		parent.subgroups.remove(this);
+		parent.subgroups.add(this);
 	}
 	
 	/**

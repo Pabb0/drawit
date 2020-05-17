@@ -7,7 +7,7 @@ import drawit.IntPoint;
 import drawit.RoundedPolygon;
 
 /**
- * @invar |getShape() != null
+ * @invar | getShape() != null
  */
 public class LeafShapeGroup extends ShapeGroup{
 	

@@ -47,8 +47,6 @@ public class NonleafShapeGroup extends ShapeGroup{
 	/**
 	 * Returns the subgroup at the given (zero-based) index in this non-leaf shape group's list of subgroups.
 	 * 
-	 * @throws UnsupportedOperationException if this is a leaf shape group
-	 *    | getSubgroups() == null
 	 * @throws IllegalArgumentException if the given index is out of bounds
 	 *    | index < 0 || getSubgroups().size() <= index
 	 * @post | result == getSubgroups().get(index)
@@ -58,7 +56,9 @@ public class NonleafShapeGroup extends ShapeGroup{
 			throw new IllegalArgumentException("index out of bounds");
 		return subgroups.get(index);
 	}
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<RoundedPolygon> getAllShapes() { 
 		return subgroups.stream().flatMap(subgroup -> subgroup.getAllShapes().stream()).collect(Collectors.toList());
 	}
@@ -67,8 +67,6 @@ public class NonleafShapeGroup extends ShapeGroup{
 	 * Return the first subgroup in this non-leaf shape group's list of subgroups whose
 	 * extent contains the given point, expressed in this shape group's inner coordinate system.
 	 * 
-	 * @throws UnsupportedOperationException if this shape group is a leaf shape group
-	 *    | getSubgroups() == null
 	 * @throws IllegalArgumentException if {@code innerCoordinates} is null
 	 *    | innerCoordinates == null
 	 * @post
@@ -77,8 +75,6 @@ public class NonleafShapeGroup extends ShapeGroup{
 	 *    |         .findFirst().orElse(null))
 	 */
 	public ShapeGroup getSubgroupAt(IntPoint innerCoordinates) {
-		if (subgroups == null)
-			throw new UnsupportedOperationException("this is a leaf shape group");
 		if (innerCoordinates == null)
 			throw new IllegalArgumentException("innerCoordinates is null");
 		

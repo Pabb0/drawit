@@ -17,6 +17,9 @@ class Test_P3_3 {
 
 	@Test
 	void test() {
+		
+		// Test zijn uitgevoerd door de toPlainData te printen naar de console en hierin checken of het klopt 
+		// Zoals bij drawingCommands()
 		IntPoint iPoint1 = new IntPoint(100, 100);
 		IntPoint iPoint2 = new IntPoint(200, 100);
 		IntPoint iPoint3 = new IntPoint(200, 200);
@@ -51,9 +54,16 @@ class Test_P3_3 {
 	    ShapeGroup shape5 = new NonleafShapeGroup(shape1And2And3);
 	    
 	    
+	    System.out.println(ShapeGroupExporter.toPlainData(shape1));
+	    System.out.println("");
+	    System.out.println(ShapeGroupExporter.toPlainData(shape2));
+	    System.out.println("");
+	    System.out.println(ShapeGroupExporter.toPlainData(shape3));
+	    System.out.println("");
+	    System.out.println(ShapeGroupExporter.toPlainData(shape4));
+	    System.out.println("");
 	    System.out.println(ShapeGroupExporter.toPlainData(shape5));
-
-	    
+	    System.out.println("");
 	    
 	    
 	    RoundedPolygon polygon4 = new RoundedPolygon();
@@ -66,14 +76,12 @@ class Test_P3_3 {
 	    polygon5.setVertices(iPointArray5);
 	    polygon5.setRadius(7);
 	    
-	    
 	    ShapeGroup shape6 = new LeafShapeGroup(polygon4);
 	    ShapeGroup shape7 = new LeafShapeGroup(polygon5);
 	    
 	    shape6.setExtent(Extent.ofLeftTopRightBottom(10, 20, 15, 132));
 	    shape7.setExtent(Extent.ofLeftTopRightBottom(15, 22, 100, 200));
 
-	    
 	    ShapeGroup[] shape6And7 = {shape6, shape7};
 	    
 	    ShapeGroup shape8 = new NonleafShapeGroup(shape6And7);
@@ -85,15 +93,16 @@ class Test_P3_3 {
 	    ShapeGroup[] shape5And8 = {shape5, shape8};
 	    
 	    ShapeGroup shape9 = new NonleafShapeGroup(shape5And8);
+	    System.out.println("");
+	    System.out.println(ShapeGroupExporter.toPlainData(shape6));
+	    System.out.println("");
+	    System.out.println(ShapeGroupExporter.toPlainData(shape7));
+	    System.out.println("");
+	    System.out.println(ShapeGroupExporter.toPlainData(shape8));
+	    System.out.println("");
 	    System.out.println(ShapeGroupExporter.toPlainData(shape9));
-	    
+	    System.out.println("");
 
-	    
-	    
-	    
-
-	    			
-	    
 	}
 
 }

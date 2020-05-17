@@ -32,16 +32,17 @@ abstract public class ShapeGroup {
 	 * @invar | parent == null || nextSibling.parent == parent && nextSibling.previousSibling == this
 	 * @invar | parent == null || previousSibling.parent == parent && previousSibling.nextSibling == this
 	 * @invar | parent == null || ((NonleafShapeGroup) parent).getSubgroupsPrivate().contains(this)
-	 * @invar | !getAncestorsPrivate().contains(this)
+	 * @invar | !getAncestorsPackage().contains(this)
 	 */
 	
 	
 	/** @peerObject */
-	ShapeGroup parent;
+	NonleafShapeGroup parent;
 	/** @peerObject */
 	ShapeGroup previousSibling;
 	/** @peerObject */
 	ShapeGroup nextSibling;
+	
 	Extent originalExtent;
 	Extent currentExtent;
 	
@@ -56,10 +57,10 @@ abstract public class ShapeGroup {
 	 *       |         ancestor.getParentGroup() == null || ancestors.contains(ancestor.getParentGroup()))))
 	 */
 	public Set<ShapeGroup> getAncestors() {
-		return getAncestorsPrivate();
+		return getAncestorsPackage();
 	}
 	
-	Set<ShapeGroup> getAncestorsPrivate() {
+	Set<ShapeGroup> getAncestorsPackage() {
 		return LogicalSet.<ShapeGroup>matching(ancestors ->
 			parent == null || ancestors.contains(parent) &&
 			ancestors.allMatch(ancestor -> ancestor.parent == null || ancestors.contains(ancestor.parent))
@@ -105,7 +106,7 @@ abstract public class ShapeGroup {
 	 * @basic
 	 * @peerObject
 	 */
-	public ShapeGroup getParentGroup() { return parent; }
+	public NonleafShapeGroup getParentGroup() { return parent; }
 
 
 
@@ -356,7 +357,7 @@ abstract public class ShapeGroup {
 			throw new UnsupportedOperationException("no parent");
 		remove();
 		insertBeforeFirstChild();
-		((NonleafShapeGroup) parent).firstChild = this;
+		parent.firstChild = this;
 	}
 	
 	/**

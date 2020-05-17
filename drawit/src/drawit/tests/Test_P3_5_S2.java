@@ -21,6 +21,7 @@ class Test_P3_5_S2 {
 		Object e4 = Extent.ofLeftTopWidthHeight(0, 0, 100, 100);
 		Object e5 = Extent.ofLeftTopRightBottom(100, 100, 300, 300);
 		Object e6 = Extent.ofLeftTopWidthHeight(100, 100, 200, 200);
+		Object e7 = Extent.ofLeftTopRightBottom(100, 100, 123, 123);
 		
 		assert e1.equals(e2);
 		assert !e1.equals(e3);
@@ -37,6 +38,7 @@ class Test_P3_5_S2 {
 		assert l1.contains(e4);
 		assert !l1.contains(e5);
 		assert !l1.contains(e6);
+		assert !l1.contains(e7);
 		
 		HashSet<Object> s1 = new HashSet<>();
 		
@@ -49,6 +51,8 @@ class Test_P3_5_S2 {
 		assert s1.contains(e4);
 		assert !s1.contains(e5);
 		assert !s1.contains(e6);
+		assert !s1.contains(e7);
+
 		
 		System.out.println(e1.toString());
 		System.out.println(e2.toString());
@@ -56,6 +60,7 @@ class Test_P3_5_S2 {
 		System.out.println(e4.toString());
 		System.out.println(e5.toString());
 		System.out.println(e6.toString());
+		System.out.println(e7.toString());
 
 	}
 

@@ -10,7 +10,7 @@ import drawit.RoundedPolygon;
 /**
  * @invar | getShape() != null
  */
-public class LeafShapeGroup extends ShapeGroup{
+public class LeafShapeGroup extends ShapeGroup {
 	
 	/**
 	 * @invar shape != null

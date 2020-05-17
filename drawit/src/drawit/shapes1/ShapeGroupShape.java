@@ -61,7 +61,7 @@ public class ShapeGroupShape implements Shape{
 				}
 	
 				@Override
-				public void remove() {}
+				public void remove() { throw new UnsupportedOperationException("unsupported");}
 	
 				@Override
 				public void move(IntVector delta) {
