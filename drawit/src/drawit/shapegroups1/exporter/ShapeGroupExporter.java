@@ -71,10 +71,9 @@ public class ShapeGroupExporter {
 									"bottom", extent.getBottom()));
 			
 			
-			List<Map<String, Object>> subgroupList = new ArrayList<Map<String, Object>>();
-			for (ShapeGroup subgroup : ((NonleafShapeGroup) shapeGroup).getSubgroups()) {
-				Object subMap = toPlainData(subgroup);
-				subgroupList.add((Map<String, Object>) subMap);
+			List<Object> subgroupList = new ArrayList<Object>();
+			for (ShapeGroup subgroup : nonLeaf.getSubgroups()) {
+				subgroupList.add(toPlainData(subgroup));
 			}
 			map.put("subgroups", subgroupList);
 			
